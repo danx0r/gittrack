@@ -4,6 +4,7 @@
 
 class issue(object):
     num = 0                 #int
+    assigned = ""           #string
     title = ""              #string
     body = ""               #string
     blocked_by = []         #list of ints / issues
@@ -31,15 +32,18 @@ class issue(object):
 
 #replace indices with objects in blocked_by            
 def fix_bb(issues):
-    for i, iss in enumerate(issues):
+    map = {}
+    for iss in issues:
         if iss == None:
             continue
-        if iss.num != i:
-            raise Exception("num != index")
+        map[iss.num] = iss
+    for iss in issues:
+        if iss == None:
+            continue
         for j in range(len(iss.blocked_by)):
             bb = iss.blocked_by[j]
             if type(bb) == int:
-                iss.blocked_by[j] = issues[bb]
+                iss.blocked_by[j] = map[bb]
 
 def compute_crit(issues):
     crit = 0
@@ -56,10 +60,11 @@ def compute_crit(issues):
 if __name__ == '__main__':
     issues = [
         None,                    #ensure index = num
-        issue(1, "First task", "", [], 1),
+        issue(1, "First task", "", [4], 1),
         issue(2, "Second task", "", [1], 1),
+        issue(4, "Third task", "", [], 3),
     ]
 
     fix_bb(issues)    
     crit, path = compute_crit(issues)
-    print "critical path days: %f issues: %s" % (crit, [x.num for x in path])
+    print "critical path days: %f issues: %s" % (crit, ["%d|%f" % (x.num, x.estimate) for x in path])
