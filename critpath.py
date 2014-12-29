@@ -31,8 +31,8 @@ class issue(object):
     def __repr__(self):
         return "<issue %d %s>" % (self.num, self.title)
 
-#replace indices with objects in blocked_by            
-def fix_bb(issues):
+#parse BB and TE
+def parse_issues(issues):
     map = {}
     for iss in issues:
         if iss == None:
@@ -41,11 +41,19 @@ def fix_bb(issues):
     for iss in issues:
         if iss == None:
             continue
-        for j in range(len(iss.blocked_by)):
-            bb = iss.blocked_by[j]
-            if type(bb) == int:
-                iss.blocked_by[j] = map[bb]
-
+        s = iss.title + iss.body
+        i = s.rfind("TE:")
+        if i >= 0:
+            te = float(s[i+3:].split()[0])
+            iss.estimate = te
+        iss.blocked_by = []
+        while "BB:" in s:
+#             print s
+            i = s.find("BB:") + 3
+            s = s[i:]
+            bb = int(s.split()[0])
+            iss.blocked_by.append(map[bb])
+            
 def compute_crit(issues):
     crit = 0
     path = []
@@ -61,11 +69,11 @@ def compute_crit(issues):
 if __name__ == '__main__':
     issues = [
         None,                    #ensure index = num
-        issue(1, 'danx0r', "First task", "", [4], 1),
-        issue(2, 'danx0r', "Second task", "", [1], 1),
-        issue(4, 'danx0r', "Third task", "", [], 3),
+        issue(1, 'danx0r', "First task BB:4 TE:1"),
+        issue(2, 'danx0r', "Second task BB:1 TE:1"),
+        issue(4, 'danx0r', "Third task", "TE:3"),
     ]
 
-    fix_bb(issues)    
+    parse_issues(issues)    
     crit, path = compute_crit(issues)
     print "critical path days: %.2f issues: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
