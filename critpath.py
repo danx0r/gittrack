@@ -1,6 +1,8 @@
 #
 # compute critical path and constrained subpaths given time and blocked-by data
 #
+import sys
+import github3
 
 class issue(object):
     num = 0                 #int
@@ -32,7 +34,8 @@ class issue(object):
         return issue in self.blocked_by
 
     def __repr__(self):
-        return "<issue %d %s>" % (self.num, self.title)
+#         return "<issue %d %s>" % (self.num, self.title)
+        return "<issue %d|%s|%s>" % (self.num, self.assignee, self.title)
 
 #find previous issue numerically for assignee
 def map_prev_assignee(map, iss):
@@ -96,14 +99,25 @@ def compute_crit(issues):
             path = pth
     return crit, path
 
+def get_issues(user, pw, repo):
+    gh = github3.login(user, password=pw)
+    issues = []
+    for giss in gh.iter_repo_issues(user, repo):
+        iss = issue(giss.number, str(giss.assignee), giss.title, giss.body)
+        issues.append(iss)
+    return issues
+
 if __name__ == '__main__':
-    issues = [
-        None,                    #ensure index = num
-        issue(1, 'danx0r', "Fursst task TE:1.5 BB:2"),
-        issue(2, 'danx0r', "Secnd task TE:1"),
-        issue(4, 'silas', "Third task", "TE:2"),
-        issue(5, 'loren', "FORTH task", "TE:1 BB:2"),
-    ]
+#     issues = [
+#         None,                    #ensure index = num
+#         issue(1, 'danx0r', "Fursst task TE:1.5 BB:2"),
+#         issue(2, 'danx0r', "Secnd task TE:1"),
+#         issue(4, 'silas', "Third task", "TE:2"),
+#         issue(5, 'loren', "FORTH task", "TE:1 BB:2"),
+#     ]
+    issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3])
+    for iss in issues:
+        print iss
 
     parse_issues(issues)    
     crit, path = compute_crit(issues)
