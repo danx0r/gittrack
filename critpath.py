@@ -4,7 +4,7 @@
 
 class issue(object):
     num = 0                 #int
-    assigned = ""           #string
+    assignee = ""           #string
     title = ""              #string
     body = ""               #string
     blocked_by = []         #list of ints / issues
@@ -12,7 +12,7 @@ class issue(object):
 
     def __init__(self, num=0, ass='', title="", body="", bb=[], est=0):
         self.num = num
-        self.assigned = ass
+        self.assignee = ass
         self.title = title
         self.body = body
         self.blocked_by = bb
@@ -31,7 +31,16 @@ class issue(object):
     def __repr__(self):
         return "<issue %d %s>" % (self.num, self.title)
 
+#find previous issue numerically for assignee
+def map_prev_assignee(map, iss):
+    i = iss.num - 1
+    while i >= 0:
+        if i in map and map[i].assignee == iss.assignee:
+            return map[i]
+        i -= 1
+
 #parse BB and TE
+#ensure no parallel work for one assignee
 def parse_issues(issues):
     map = {}
     for iss in issues:
@@ -53,6 +62,18 @@ def parse_issues(issues):
             s = s[i:]
             bb = int(s.split()[0])
             iss.blocked_by.append(map[bb])
+        #determine if any of our bb's are assigned to us
+        flag = False
+        for bb in iss.blocked_by:
+            if bb.assignee == iss.assignee:
+                flag = True
+                break
+        #if not, auto-bb previous issue if any
+        if not flag:
+            prev = map_prev_assignee(map, iss)
+#             print "prev for", iss, "is:", prev
+            if prev != None:
+                iss.blocked_by.append(prev)
             
 def compute_crit(issues):
     crit = 0
@@ -69,11 +90,11 @@ def compute_crit(issues):
 if __name__ == '__main__':
     issues = [
         None,                    #ensure index = num
-        issue(1, 'danx0r', "First task BB:4 TE:1"),
-        issue(2, 'danx0r', "Second task BB:1 TE:1"),
-        issue(4, 'danx0r', "Third task", "TE:3"),
+        issue(1, 'danx0r', "First task TE:1"),
+        issue(2, 'danx0r', "Second task TE:1.5"),
+        issue(4, 'silas', "Third task", "TE:2 BB:1"),
     ]
 
     parse_issues(issues)    
     crit, path = compute_crit(issues)
-    print "critical path days: %.2f issues: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
+    print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
