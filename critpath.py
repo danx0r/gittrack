@@ -57,7 +57,7 @@ def parse_issues(issues):
     for iss in issues:
         if iss == None:
             continue
-        s = iss.title + iss.body
+        s = iss.title + iss.body if iss.body else ""
         i = s.rfind("TE:")
         if i >= 0:
             te = float(s[i+3:].split()[0])
@@ -102,10 +102,12 @@ def compute_crit(issues):
             path = pth
     return crit, path
 
-def get_issues(user, pw, repo):
+def get_issues(user, pw, repo, owner=None):
     gh = github3.login(user, password=pw)
+    if not owner:
+        owner = user
     issues = []
-    for giss in gh.iter_repo_issues(user, repo):
+    for giss in gh.iter_repo_issues(owner, repo):
         iss = issue(giss.number, str(giss.assignee), giss.title, giss.body)
         issues.append(iss)
     return issues
@@ -118,7 +120,7 @@ if __name__ == '__main__':
 #         issue(4, 'silas', "Third task", "TE:2"),
 #         issue(5, 'loren', "FORTH task", "TE:1 BB:2"),
 #     ]
-    issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3])
+    issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else sys.argv[1])
     for iss in issues:
         print iss
 
