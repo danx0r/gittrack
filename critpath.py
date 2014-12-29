@@ -53,6 +53,7 @@ def parse_issues(issues):
         if iss == None:
             continue
         map[iss.num] = iss
+
     for iss in issues:
         if iss == None:
             continue
@@ -68,6 +69,8 @@ def parse_issues(issues):
             s = s[i:]
             bb = int(s.split()[0])
             iss.blocked_by.append(map[bb])
+
+    for iss in issues:
         #determine if any of our bb's are assigned to us
         flag = False
         for bb in iss.blocked_by:
