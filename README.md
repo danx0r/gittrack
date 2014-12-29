@@ -1,3 +1,3 @@
-gittrack
-========
-a better way to scrum
+####gittrack
+
+one-project Django template; app==project
