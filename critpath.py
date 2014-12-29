@@ -67,4 +67,4 @@ if __name__ == '__main__':
 
     fix_bb(issues)    
     crit, path = compute_crit(issues)
-    print "critical path days: %f issues: %s" % (crit, ["%d|%f" % (x.num, x.estimate) for x in path])
+    print "critical path days: %.2f issues: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
