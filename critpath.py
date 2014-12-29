@@ -28,6 +28,9 @@ class issue(object):
                 path = nupth
         return self.estimate + days, path + [self]
     
+    def is_bb(self, issue):
+        return issue in self.blocked_by
+
     def __repr__(self):
         return "<issue %d %s>" % (self.num, self.title)
 
@@ -72,9 +75,15 @@ def parse_issues(issues):
         if not flag:
             prev = map_prev_assignee(map, iss)
 #             print "prev for", iss, "is:", prev
-            if prev != None:
+            if prev != None and not prev.is_bb(iss):
                 iss.blocked_by.append(prev)
-            
+
+    #DEBUG PRINTOUT
+    for iss in issues:
+        if iss == None:
+            continue
+        print "te %.2f bb for" % iss.estimate, iss, iss.blocked_by
+
 def compute_crit(issues):
     crit = 0
     path = []
@@ -90,9 +99,10 @@ def compute_crit(issues):
 if __name__ == '__main__':
     issues = [
         None,                    #ensure index = num
-        issue(1, 'danx0r', "First task TE:1"),
-        issue(2, 'danx0r', "Second task TE:1.5"),
-        issue(4, 'silas', "Third task", "TE:2 BB:1"),
+        issue(1, 'danx0r', "Fursst task TE:1.5 BB:2"),
+        issue(2, 'danx0r', "Secnd task TE:1"),
+        issue(4, 'silas', "Third task", "TE:2"),
+        issue(5, 'loren', "FORTH task", "TE:1 BB:2"),
     ]
 
     parse_issues(issues)    
