@@ -10,8 +10,9 @@ class issue(object):
     blocked_by = []         #list of ints / issues
     estimate = 0.0          #float, days
 
-    def __init__(self, num=0, title="", body="", bb=[], est=0):
+    def __init__(self, num=0, ass='', title="", body="", bb=[], est=0):
         self.num = num
+        self.assigned = ass
         self.title = title
         self.body = body
         self.blocked_by = bb
@@ -60,9 +61,9 @@ def compute_crit(issues):
 if __name__ == '__main__':
     issues = [
         None,                    #ensure index = num
-        issue(1, "First task", "", [4], 1),
-        issue(2, "Second task", "", [1], 1),
-        issue(4, "Third task", "", [], 3),
+        issue(1, 'danx0r', "First task", "", [4], 1),
+        issue(2, 'danx0r', "Second task", "", [1], 1),
+        issue(4, 'danx0r', "Third task", "", [], 3),
     ]
 
     fix_bb(issues)    
