@@ -11,13 +11,13 @@
                     Date/time
                 </div>
                 <div style="background-color:;position:relative">
-                    <div class="card" vp="0" style="height:46px;background-color:#ddd;border:solid;border-color:white;position:absolute;top:0px;left:14px">
+                    <div class="card" vp="0" vh="1" style="height:46px;background-color:#ddd;border:solid;border-color:white;position:absolute;top:0px;left:14px;overflow:hidden">
                         <div style="padding:5px;text-align:center">
                             Monday<br/>
                             2015/1/4
                         </div>
                     </div>
-                    <div class="card" vp="1" style="height:46px;background-color:black;color:white;border:solid;border-color:white;position:absolute;top:120px;left:14px">
+                    <div class="card" vp="1" vh="1" style="height:46px;background-color:black;color:white;border:solid;border-color:white;position:absolute;top:120px;left:14px;overflow:hidden">
                         <div style="padding:5px;text-align:center">
                             Tuesday<br/>
                             2015/1/5
@@ -30,7 +30,7 @@
                     silas
                 </div>
                 <div style="position:relative;background-color: green">
-                    <div class="card" vp="0" style="width:96%;height:46px;background-color:#fb8;border:dashed;border-color:white;position:absolute;top:0px">
+                    <div class="card" vp="0" vh="0.5" style="width:96%;height:46px;background-color:#fb8;border:dashed;border-color:white;position:absolute;top:0px;overflow:hidden">
                         <div style="padding:5px">
                             <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
                                 1
@@ -39,17 +39,17 @@
                             Two times two is five? Really?
                         </div>
                     </div>
-                    <div class="card" vp="0.5" style="width:96%;height:46px;background-color:#fb8;border:dashed;border-color:white;position:absolute;top:60px">
-                        <div style="padding:5px">
+                    <div class="card" vp="0.5" vh="0.5" style="width:96%;height:46px;background-color:#fb8;border:dashed;border-color:white;position:absolute;top:60px;overflow:hidden">
+                        <div style="padding:5px;overflow:hidden">
                             <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
                                 2
                             </div>
                             &nbsp;
                             Two times two is five? Really?
-                            Two times two is five? Really?
+                            Two times two is five? Reallxi?
                         </div>
                     </div>
-                    <div class="card" vp="1" style="width:96%;height:46px;background-color:#cfc;border:solid;position:absolute;top:120px">
+                    <div class="card" vp="1" vh="1" style="width:96%;height:46px;background-color:#cfc;border:solid;position:absolute;top:120px;overflow:hidden">
                         <div style="padding:5px">
                             <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
                                 4
@@ -66,7 +66,7 @@
                     loren
                 </div>
                 <div style="position:relative;background-color: green;">
-                    <div class="card" vp="0" style="width:96%;height:166px;background-color:#acf;border:solid;position:absolute;top:0px">
+                    <div class="card" vp="0" vh="2" style="width:96%;height:166px;background-color:#acf;border:solid;position:absolute;top:0px;overflow:hidden">
                         <div style="padding:5px">
                             <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
                                 3
@@ -86,7 +86,7 @@
                     danx0r
                 </div>
                 <div style="position:relative;background-color: green;">
-                    <div class="card" vp="1" style="width:96%;height:46px;background-color:#b22;border:dashed;border-color:white;position:absolute;top:120px">
+                    <div class="card" vp="1" vh="1" style="width:96%;height:46px;background-color:#b22;border:dashed;border-color:white;position:absolute;top:120px;overflow:hidden">
                         <div style="padding:5px;color:white">
                             <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
                                 125
@@ -105,19 +105,24 @@
                 </div>
             </div>
         </div>
-        <button onclick="test(1.05)" style="position:absolute;top:500px;left:0px">zoom in</button>
-        <button onclick="test(.95)" style="position:absolute;top:500px;left:110px">zoom out</button>
+        <button onclick="test(1.25)" style="position:absolute;top:500px;left:0px">zoom in</button>
+        <button onclick="test(.8)" style="position:absolute;top:500px;left:110px">zoom out</button>
         <script>
-            mul=60.0;
+            mul=100.0;
             function test(f) {
                 mul *= f;
                 var els = document.querySelectorAll(".card");
-                console.log(els);
+                // console.log(els);
                 for(var i=0; i<els.length; i++) {
                     var el = els[i]
                     var vp = parseFloat(el.getAttribute('vp'))
-                    console.log(vp);
                     el.style.top = "" + (vp*mul+"px");
+                    var at = el.getAttribute('vh');
+                    if (at != null) {
+                        var vh = parseFloat(at);
+                        el.style.height = "" + (vh*mul-9+"px");
+                        console.log("HEIGHT:", mul, el.style.height)
+                    }
                 }
             }
             test(1);
