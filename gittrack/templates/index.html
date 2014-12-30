@@ -105,11 +105,12 @@
                 </div>
             </div>
         </div>
-        <button onclick="test()" style="position:absolute;top:500px;left:0px">test</button>
+        <button onclick="test(1.05)" style="position:absolute;top:500px;left:0px">zoom in</button>
+        <button onclick="test(.95)" style="position:absolute;top:500px;left:110px">zoom out</button>
         <script>
-            mul=60;
-            function test() {
-                mul -= 5;
+            mul=60.0;
+            function test(f) {
+                mul *= f;
                 var els = document.querySelectorAll(".card");
                 console.log(els);
                 for(var i=0; i<els.length; i++) {
