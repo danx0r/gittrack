@@ -4,6 +4,9 @@
 import sys
 import github3
 
+def clean_cr(s):
+    return s.replace('\r', '\n').rstrip()
+
 class issue(object):
     num = 0                 #int
     assignee = ""           #string
@@ -11,6 +14,7 @@ class issue(object):
     body = ""               #string
     blocked_by = []         #list of ints / issues
     estimate = 0.0          #float, days
+    labels = []             #list of strings
 
     def __init__(self, num=0, ass='', title="", body="", bb=[], est=0):
         self.num = num
@@ -35,7 +39,11 @@ class issue(object):
 
     def __repr__(self):
 #         return "<issue %d %s>" % (self.num, self.title)
-        return "<issue %d|%s|%s>" % (self.num, self.assignee, self.title)
+        return "<issue %d|%s|%s>" % (self.num, self.assignee, clean_cr(self.title))
+    
+    def bigrepr(self):
+        return "<issue %d|%s|%s|%s est: %f bb: %s labels: %s>" % (self.num, self.assignee, 
+                        clean_cr(self.title), clean_cr(self.body).replace('\n', ' '), self.estimate, self.blocked_by, self.labels)
 
 #find previous issue numerically for assignee
 def map_prev_assignee(map, iss):
@@ -122,7 +130,7 @@ if __name__ == '__main__':
 #     ]
     issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else sys.argv[1])
     for iss in issues:
-        print iss
+        print "ISSUE:", iss.bigrepr()
 
     parse_issues(issues)    
     crit, path = compute_crit(issues)
