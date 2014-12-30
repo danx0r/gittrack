@@ -2,6 +2,8 @@
 # compute critical path and constrained subpaths given time and blocked-by data
 #
 import sys
+import pytz, tzlocal
+from dateutil.parser import parse as parse_dt
 import github3
 
 def clean_cr(s):
@@ -45,9 +47,9 @@ class issue(object):
         return "<issue %d|%s|%s>" % (self.num, self.assignee, clean_cr(self.title))
     
     def bigrepr(self):
-        return "<issue %d|%s|%s|%s est: %f mil: %s:%s:%s bb: %s labels: %s>" % (self.num, self.assignee, 
+        return "<issue %d|%s|%s|%s est: %.2f mil: %s|%s|%s bb: %s labels: %s>" % (self.num, self.assignee, 
                         clean_cr(self.title), clean_cr(self.body).replace('\n', ' '), self.estimate,
-                        clean_cr(self.mil_name), self.mil_start, self.mil_due, 
+                        clean_cr(self.mil_name), self.mil_start.strftime("%Y-%m-%d_%H:%M"), self.mil_due.strftime("%Y-%m-%d_%H:%M"), 
                         self.blocked_by, self.labels)
 
 #find previous issue numerically for assignee
@@ -116,7 +118,7 @@ def compute_crit(issues):
     return crit, path
 
 def get_issues(user, pw, repo, owner=None):
-#     global giss
+    global giss
     gh = github3.login(user, password=pw)
     if not owner:
         owner = user
@@ -125,6 +127,13 @@ def get_issues(user, pw, repo, owner=None):
         iss = issue(giss.number, str(giss.assignee), giss.title, giss.body)
         iss.labels = [str(x) for x in giss.labels]
         iss.mil_name = str(giss.milestone if giss.milestone else '')
+        if giss.milestone.due_on:
+            iss.mil_due = giss.milestone.due_on
+        if "ST:" in giss.milestone.description:
+            i = giss.milestone.description.find("ST:") + 3
+            s = giss.milestone.description[i:].split()[0]
+            iss.mil_start = tzlocal.get_localzone().localize(parse_dt(s)).astimezone(pytz.utc) #sheesh, is that really necessary?
+            
         issues.append(iss)
     return issues
 
