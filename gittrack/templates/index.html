@@ -39,7 +39,7 @@
                             Two times two is five? Really?
                         </div>
                     </div>
-                    <div style="width:96%;height:46px;background-color:#fb8;border:solid;border-color:#f0f;position:absolute;top:60px">
+                    <div class="card" vp="1" style="width:96%;height:46px;background-color:#fb8;border:solid;border-color:#f0f;position:absolute;top:60px">
                         <div style="padding:5px">
                             <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
                                 2
@@ -86,7 +86,7 @@
                     danx0r
                 </div>
                 <div style="position:relative;background-color: green;">
-                    <div style="width:96%;height:46px;background-color:#b22;border:solid;border-color:#f0f;position:absolute;top:120px">
+                    <div class="card" vp="2" style="width:96%;height:46px;background-color:#b22;border:solid;border-color:#f0f;position:absolute;top:120px">
                         <div style="padding:5px;color:white">
                             <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
                                 125
@@ -105,5 +105,15 @@
                 </div>
             </div>
         </div>
+        <script>
+            var els = document.querySelectorAll(".card");
+            console.log(els);
+            for(var i=0; i<els.length; i++) {
+                var el = els[i]
+                var vp = parseFloat(el.getAttribute('vp'))
+                console.log(vp);
+                el.style.top = "" + (vp*60+"px");
+            }
+        </script>
     </body>
 </html>
