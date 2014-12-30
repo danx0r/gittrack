@@ -105,14 +105,19 @@
                 </div>
             </div>
         </div>
+        <button onclick="test()" style="position:absolute;top:500px;left:0px">test</button>
         <script>
-            var els = document.querySelectorAll(".card");
-            console.log(els);
-            for(var i=0; i<els.length; i++) {
-                var el = els[i]
-                var vp = parseFloat(el.getAttribute('vp'))
-                console.log(vp);
-                el.style.top = "" + (vp*60+"px");
+            mul=60;
+            function test() {
+                mul -= 5;
+                var els = document.querySelectorAll(".card");
+                console.log(els);
+                for(var i=0; i<els.length; i++) {
+                    var el = els[i]
+                    var vp = parseFloat(el.getAttribute('vp'))
+                    console.log(vp);
+                    el.style.top = "" + (vp*mul+"px");
+                }
             }
         </script>
     </body>
