@@ -15,6 +15,9 @@ class issue(object):
     blocked_by = []         #list of ints / issues
     estimate = 0.0          #float, days
     labels = []             #list of strings
+    mil_name = ''           #string
+    mil_start = ''          #datetime or ''
+    mil_due = ''            #datetime or ''
 
     def __init__(self, num=0, ass='', title="", body="", bb=[], est=0):
         self.num = num
@@ -42,8 +45,10 @@ class issue(object):
         return "<issue %d|%s|%s>" % (self.num, self.assignee, clean_cr(self.title))
     
     def bigrepr(self):
-        return "<issue %d|%s|%s|%s est: %f bb: %s labels: %s>" % (self.num, self.assignee, 
-                        clean_cr(self.title), clean_cr(self.body).replace('\n', ' '), self.estimate, self.blocked_by, self.labels)
+        return "<issue %d|%s|%s|%s est: %f mil: %s:%s:%s bb: %s labels: %s>" % (self.num, self.assignee, 
+                        clean_cr(self.title), clean_cr(self.body).replace('\n', ' '), self.estimate,
+                        clean_cr(self.mil_name), self.mil_start, self.mil_due, 
+                        self.blocked_by, self.labels)
 
 #find previous issue numerically for assignee
 def map_prev_assignee(map, iss):
@@ -111,6 +116,7 @@ def compute_crit(issues):
     return crit, path
 
 def get_issues(user, pw, repo, owner=None):
+#     global giss
     gh = github3.login(user, password=pw)
     if not owner:
         owner = user
@@ -118,6 +124,7 @@ def get_issues(user, pw, repo, owner=None):
     for giss in gh.iter_repo_issues(owner, repo):
         iss = issue(giss.number, str(giss.assignee), giss.title, giss.body)
         iss.labels = [str(x) for x in giss.labels]
+        iss.mil_name = str(giss.milestone if giss.milestone else '')
         issues.append(iss)
     return issues
 
