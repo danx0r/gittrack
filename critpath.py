@@ -117,6 +117,7 @@ def get_issues(user, pw, repo, owner=None):
     issues = []
     for giss in gh.iter_repo_issues(owner, repo):
         iss = issue(giss.number, str(giss.assignee), giss.title, giss.body)
+        iss.labels = [str(x) for x in giss.labels]
         issues.append(iss)
     return issues
 
