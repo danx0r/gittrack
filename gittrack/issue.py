@@ -164,8 +164,8 @@ if __name__ == '__main__':
 #         issue(5, 'loren', "FORTH task", "TE:1 BB:2"),
 #     ]
     issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else sys.argv[1], sys.argv[5] if len(sys.argv) > 5 else None)
-    parse_issues(issues)    
+    parse_issues(issues)
     for iss in issues:
         print "ISSUE:", iss.bigrepr()
     crit, path = compute_crit(issues)
-    print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
+    print "critical path days: %.2f path: %s" % (crit, [x.bigrepr() for x in path])
