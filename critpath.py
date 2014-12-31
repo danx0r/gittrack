@@ -15,13 +15,13 @@ class issue(object):
     title = ""              #string
     body = ""               #string
     blocked_by = []         #list of ints / issues
-    estimate = 0.0          #float, days
+    estimate = 0.5          #float, days
     labels = []             #list of strings
     mil_name = ''           #string
     mil_start = ''          #datetime or ''
     mil_due = ''            #datetime or ''
 
-    def __init__(self, num=0, ass='', title="", body="", bb=[], est=0):
+    def __init__(self, num=0, ass='', title="", body="", bb=[], est=0.5):
         self.num = num
         self.assignee = ass
         self.title = title
@@ -49,7 +49,9 @@ class issue(object):
     def bigrepr(self):
         return "<issue %d|%s|%s|%s est: %.2f mil: %s|%s|%s bb: %s labels: %s>" % (self.num, self.assignee, 
                         clean_cr(self.title), clean_cr(self.body).replace('\n', ' '), self.estimate,
-                        clean_cr(self.mil_name), self.mil_start.strftime("%Y-%m-%d_%H:%M"), self.mil_due.strftime("%Y-%m-%d_%H:%M"), 
+                        clean_cr(self.mil_name), 
+                        self.mil_start.strftime("%Y-%m-%d_%H:%M") if self.mil_start else '', 
+                        self.mil_due.strftime("%Y-%m-%d_%H:%M") if self.mil_due else '',
                         self.blocked_by, self.labels)
 
 #find previous issue numerically for assignee
@@ -117,23 +119,36 @@ def compute_crit(issues):
             path = pth
     return crit, path
 
-def get_issues(user, pw, repo, owner=None):
-    global giss
+def get_ghrepo(gh, owner, repo):
+    for r in gh.iter_repos():
+        if str(r.owner) == owner and r.name == repo:
+            return r
+
+def get_milestone_id(repo, ms):
+    for m in repo.iter_milestones():
+        if str(m) == ms:
+            return m.number
+
+def get_issues(user, pw, repo, owner=None, mil=None):
+    global gh, giss
     gh = github3.login(user, password=pw)
     if not owner:
         owner = user
+    if mil:
+        gr = get_ghrepo(gh, owner, repo)
+        mil = get_milestone_id(gr, mil)
     issues = []
-    for giss in gh.iter_repo_issues(owner, repo):
+    for giss in gh.iter_repo_issues(owner, repo, **({'milestone': mil} if mil else {}) ):
         iss = issue(giss.number, str(giss.assignee), giss.title, giss.body)
         iss.labels = [str(x) for x in giss.labels]
-        iss.mil_name = str(giss.milestone if giss.milestone else '')
-        if giss.milestone.due_on:
-            iss.mil_due = giss.milestone.due_on
-        if "ST:" in giss.milestone.description:
-            i = giss.milestone.description.find("ST:") + 3
-            s = giss.milestone.description[i:].split()[0]
-            iss.mil_start = tzlocal.get_localzone().localize(parse_dt(s)).astimezone(pytz.utc) #sheesh, is that really necessary?
-            
+        if giss.milestone:
+            iss.mil_name = str(giss.milestone)
+            if giss.milestone.due_on:
+                iss.mil_due = giss.milestone.due_on
+            if "ST:" in giss.milestone.description:
+                i = giss.milestone.description.find("ST:") + 3
+                s = giss.milestone.description[i:].split()[0]
+                iss.mil_start = tzlocal.get_localzone().localize(parse_dt(s)).astimezone(pytz.utc) #sheesh, is that really necessary?
         issues.append(iss)
     return issues
 
@@ -145,7 +160,7 @@ if __name__ == '__main__':
 #         issue(4, 'silas', "Third task", "TE:2"),
 #         issue(5, 'loren', "FORTH task", "TE:1 BB:2"),
 #     ]
-    issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else sys.argv[1])
+    issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else sys.argv[1], sys.argv[5] if len(sys.argv) > 5 else None)
     for iss in issues:
         print "ISSUE:", iss.bigrepr()
 
