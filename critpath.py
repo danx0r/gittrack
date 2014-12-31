@@ -44,15 +44,16 @@ class issue(object):
 
     def __repr__(self):
 #         return "<issue %d %s>" % (self.num, self.title)
-        return "<issue %d|%s|%s>" % (self.num, self.assignee, clean_cr(self.title))
+        return "<#%d|%s|%s>" % (self.num, self.assignee, clean_cr(self.title))
     
     def bigrepr(self):
-        return "<issue %d|%s|%s|%s est: %.2f mil: %s|%s|%s bb: %s labels: %s>" % (self.num, self.assignee, 
+        return "<#%d|%s|%s|%s est: %.2f mil: %s|%s|%s bb: %s labels: %s>" % (self.num, self.assignee, 
                         clean_cr(self.title), clean_cr(self.body).replace('\n', ' '), self.estimate,
                         clean_cr(self.mil_name), 
                         self.mil_start.strftime("%Y-%m-%d_%H:%M") if self.mil_start else '', 
                         self.mil_due.strftime("%Y-%m-%d_%H:%M") if self.mil_due else '',
-                        self.blocked_by, self.labels)
+                        [x.num for x in self.blocked_by], 
+                        self.labels)
 
 #find previous issue numerically for assignee
 def map_prev_assignee(map, iss):
@@ -102,10 +103,10 @@ def parse_issues(issues):
                 iss.blocked_by.append(prev)
 
     #DEBUG PRINTOUT
-    for iss in issues:
-        if iss == None:
-            continue
-        print "te %.2f bb for" % iss.estimate, iss, iss.blocked_by
+#     for iss in issues:
+#         if iss == None:
+#             continue
+#         print "te %.2f bb for" % iss.estimate, iss, iss.blocked_by
 
 def compute_crit(issues):
     crit = 0
@@ -137,6 +138,8 @@ def get_issues(user, pw, repo, owner=None, mil=None):
     if mil:
         gr = get_ghrepo(gh, owner, repo)
         mil = get_milestone_id(gr, mil)
+        if not mil:
+            return []
     issues = []
     for giss in gh.iter_repo_issues(owner, repo, **({'milestone': mil} if mil else {}) ):
         iss = issue(giss.number, str(giss.assignee), giss.title, giss.body)
@@ -161,9 +164,8 @@ if __name__ == '__main__':
 #         issue(5, 'loren', "FORTH task", "TE:1 BB:2"),
 #     ]
     issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else sys.argv[1], sys.argv[5] if len(sys.argv) > 5 else None)
+    parse_issues(issues)    
     for iss in issues:
         print "ISSUE:", iss.bigrepr()
-
-    parse_issues(issues)    
     crit, path = compute_crit(issues)
     print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
