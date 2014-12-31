@@ -77,7 +77,7 @@ def home(request):
     #column for each assignee
     columns = []
     for ass in asses:
-        col = [ass, []]
+        col = [ass if ass else "UNASSIGNED", []]
         for iss in issues:
             if iss.assignee == ass:
                 card = {}

@@ -144,7 +144,7 @@ def get_issues(user, pw, repo, owner=None, mil=None):
             return []
     issues = []
     for giss in gh.iter_repo_issues(owner, repo, **({'milestone': mil} if mil else {}) ):
-        iss = issue(giss.number, str(giss.assignee), giss.title, giss.body)
+        iss = issue(giss.number, str(giss.assignee) if giss.assignee else '', giss.title, giss.body)
         iss.labels = [str(x) for x in giss.labels]
         iss.comments = [x.body for x in giss.iter_comments()]
         if giss.milestone:
