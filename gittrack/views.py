@@ -91,7 +91,7 @@ def home(request):
             if iss.assignee == ass:
                 card = {}
                 card['num'] = iss.num
-                card['title'] = iss.title
+                card['title'] = iss.title           # + "|"+str(iss.auto_bb)
                 card['length'] = iss.estimate
                 card['start'], x = iss.crit_path()
                 card['start'] -= iss.estimate

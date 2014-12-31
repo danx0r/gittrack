@@ -10,17 +10,17 @@ def clean_cr(s):
     return s.replace('\r', '\n').rstrip()
 
 class issue(object):
-    num = 0                 #int
-    assignee = ""           #string
-    title = ""              #string
-    body = ""               #string
-    blocked_by = []         #list of ints / issues
-    auto_bb = []            #list of int id's of auto-blocked (don't display)
-    estimate = 0.5          #float, days
-    labels = []             #list of strings
-    mil_name = ''           #string
-    mil_start = ''          #datetime or ''
-    mil_due = ''            #datetime or ''
+#     num = 0                 #int
+#     assignee = ""           #string
+#     title = ""              #string
+#     body = ""               #string
+#     blocked_by = []         #list of ints / issues
+#     auto_bb = []            #list of int id's of auto-blocked (don't display)
+#     estimate = 0.5          #float, days
+#     labels = []             #list of strings
+#     mil_name = ''           #string
+#     mil_start = ''          #datetime or ''
+#     mil_due = ''            #datetime or ''
 
     def __init__(self, num=0, ass='', title="", body="", bb=[], est=0.5):
         self.num = num
@@ -29,6 +29,12 @@ class issue(object):
         self.body = body
         self.blocked_by = bb
         self.estimate = est
+        self.labels = []
+        self.blocked_by = []
+        self.auto_bb = []
+        self.mil_name = ''
+        self.mil_start = ''
+        self.mil_due = ''
 
     def crit_path(self):
         days = 0
@@ -63,6 +69,7 @@ def map_prev_assignee(map, iss):
         if i in map and map[i].assignee == iss.assignee:
             return map[i]
         i -= 1
+    return None
 
 #parse BB and TE
 #ensure no parallel work for one assignee
