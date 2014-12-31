@@ -20,7 +20,7 @@ def home(request):
         [
             'danx0r',
             [
-                {'num':1, 'title': "Bad mojo bros!", 'start': 0, 'length': 1, 'color': "#cce", 'border': 'dashed', 'bcolor': '#444'},
+                {'num':1, 'title': "Something's coming...", 'start': 0, 'length': .5, 'color': "#cce", 'border': 'dashed', 'bcolor': '#444'},
                 {'num':2, 'BB': [1, 3], 'title': "Bad mojo bros!", 'start': 1.5, 'length': 1.5, 'color': "#cce", 'bcolor': '#ff00ff'}
             ]
         ],
