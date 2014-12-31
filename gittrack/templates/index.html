@@ -5,25 +5,31 @@
         <title>gittrack</title>
         <style>
             .card {
+                box-sizing: border-box;
                 position: absolute;
                 width: 100%;
-                /*background-color: #ddd;*/
+                padding: 4px;
             }
             .inner {
-                /*border: solid;*/
-                background-color: #ddd;
+                box-sizing: border-box;
+                padding: 2px;
+                border: solid;
+                /*border-width: thin;*/
                 height: 100%;
+                overflow: hidden;
             }
         </style>
     </head>
     <body style="font-family:sans" onkeypress="adjust(event.keyCode | event.charCode)">
-        <div style="width:180px;float:left">
+        <div style="width:130px;float:left">
             date/time<br/><br/>
             <div style="position:relative;width:100%">
                 {% for day in days %}
                     <div class="card" vp="{{ forloop.counter0 }}" vh="1">
-                        <div class="inner">
-                            {{ day |safe }}
+                        <div class="inner" style="background-color:{{ day.color }}; color:{{ day.texcol }}; border-color: #888">
+                            {{ day.dow }}
+                            <br/>
+                            {{ day.date }}
                         </div>
                     </div>
                 {% endfor %}
@@ -34,8 +40,22 @@
                 {{ col.0 }}<br/><br>
                 <div style="position:relative">
                     {% for card in col.1 %}
-                        <div class="card" vp="{{ card.start }}" vh="{{ card.length }}" style="background-color:{{ card.color }}">
-                            {{ card }}
+                        <div class="card" vp="{{ card.start }}" vh="{{ card.length }}">
+                            <div class="inner" style="background-color:{{ card.color }}; border-style:{{ card.border }}; border-color:{{ card.bcolor }}">
+                                <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
+                                    {{ card.num }}
+                                </div>
+                                {% for bb in card.BB %}
+                                    <div style="float:left">
+                                        &nbsp;
+                                    </div>
+                                    <div style="background-color:#787878;color:white;font-size:90%;padding: 0 2px 0 2px; float:left">
+                                        {{ bb }}
+                                    </div>
+                                {% endfor %}
+                                <span style="font-size: 30%">&nbsp;</span>
+                                {{ card.title }}
+                            </div>
                         </div>
                     {% endfor %}
                 </div>
@@ -43,7 +63,7 @@
         {% endfor %}
         <!-- <div class="card" vp="1" vh="1" style="color:red">TEST</div> -->
         <script>
-            mul=100.0;
+            mul=72.0;
             function resize(f) {
                 mul *= f;
                 var els = document.querySelectorAll(".card");
@@ -56,15 +76,16 @@
                     if (at != null) {
                         var vh = parseFloat(at);
                         el.style.height = "" + (vh*mul-0+"px");
-                        console.log("HEIGHT:", mul, el.style.height)
+                        // console.log("HEIGHT:", mul, el.style.height)
                     }
                 }
             }
             function adjust(key) {
-                if(key == 45) {
+                // console.log(key);
+                if(key == 45||key == 95) {
                     resize(0.8);
                 }
-                if(key == 61) {
+                if(key == 61||key == 43) {
                     resize(1.25);
                 }
             }
