@@ -1,6 +1,6 @@
 # from django.http import Http404
 # from django.shortcuts import get_object_or_404, render
-# from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse#, HttpResponseRedirect
 # from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, render_to_response
 import datetime
@@ -46,9 +46,18 @@ def home(request):
     crit, path = compute_crit(issues)
     print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
 
+    if not issues:
+        return HttpResponse("no issues found")
+
     #create date column
     start = issues[0].mil_start
     due = issues[0].mil_due
+    if due and not start:
+        start = due - datetime.timedelta(days=7)
+    elif start and not due:
+        due = start + datetime.timedelta(days=7)
+    else:
+        return HttpResponse("milestone needs a start and due date.  Add start date as ST:2011-1-1")
     print "start date:", start, "due date:", due
     days = []
     today = start
