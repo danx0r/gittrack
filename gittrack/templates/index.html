@@ -18,11 +18,20 @@
                 height: 100%;
                 overflow: hidden;
             }
+            .colhead {
+                text-align: center;
+                background-color: #888;
+                color: white;
+                margin-left: 4px;
+                margin-right: 4px;
+            }
         </style>
     </head>
     <body style="font-family:sans" onkeypress="adjust(event.keyCode | event.charCode)">
         <div style="width:130px;float:left">
-            date/time<br/><br/>
+            <div class="colhead">
+                Date
+            </div>
             <div style="position:relative;width:100%">
                 {% for day in days %}
                     <div class="card" vp="{{ forloop.counter0 }}" vh="1">
@@ -37,7 +46,9 @@
         </div>
         {% for col in columns %}
             <div style="width:300px;float:left">
-                {{ col.0 }}<br/><br>
+                <div class="colhead">
+                    {{ col.0 }}
+                </div>
                 <div style="position:relative">
                     {% for card in col.1 %}
                         <div class="card" vp="{{ card.start }}" vh="{{ card.length }}">
