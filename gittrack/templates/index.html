@@ -5,108 +5,20 @@
         <title>gittrack</title>
     </head>
     <body style="font-family:sans">
-        <div style="width:1200px;background-color:cyan">
-            <div style="width:10%;float:left;background-color:">
-                <div style="padding:5px 5px 10px 5px; text-align:center;background-color:">
-                    Date/time
-                </div>
-                <div style="background-color:;position:relative">
-                    <div class="card" vp="0" vh="1" style="height:46px;background-color:#ddd;border:solid;border-color:white;position:absolute;top:0px;left:14px;overflow:hidden">
-                        <div style="padding:5px;text-align:center">
-                            Monday<br/>
-                            2015/1/4
-                        </div>
-                    </div>
-                    <div class="card" vp="1" vh="1" style="height:46px;background-color:black;color:white;border:solid;border-color:white;position:absolute;top:120px;left:14px;overflow:hidden">
-                        <div style="padding:5px;text-align:center">
-                            Tuesday<br/>
-                            2015/1/5
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div style="width:30%;float:left">
-                <div style="padding:5px 5px 10px 5px;text-align:center;background-color:">
-                    silas
-                </div>
-                <div style="position:relative;background-color: green">
-                    <div class="card" vp="0" vh="0.5" style="width:96%;height:46px;background-color:#fb8;border:dashed;border-color:white;position:absolute;top:0px;overflow:hidden">
-                        <div style="padding:5px">
-                            <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
-                                1
-                            </div>
-                            &nbsp;
-                            Two times two is five? Really?
-                        </div>
-                    </div>
-                    <div class="card" vp="0.5" vh="0.5" style="width:96%;height:46px;background-color:#fb8;border:dashed;border-color:white;position:absolute;top:60px;overflow:hidden">
-                        <div style="padding:5px;overflow:hidden">
-                            <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
-                                2
-                            </div>
-                            &nbsp;
-                            Two times two is five? Really?
-                            Two times two is five? Reallxi?
-                        </div>
-                    </div>
-                    <div class="card" vp="1" vh="1" style="width:96%;height:46px;background-color:#cfc;border:solid;position:absolute;top:120px;overflow:hidden">
-                        <div style="padding:5px">
-                            <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
-                                4
-                            </div>
-                            &nbsp;
-                            Two times two is five? Really?
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div style="width:30%;float:left">
-                <div style="padding:5px 5px 10px 5px;text-align:center">
-                    loren
-                </div>
-                <div style="position:relative;background-color: green;">
-                    <div class="card" vp="0" vh="2" style="width:96%;height:166px;background-color:#acf;border:solid;position:absolute;top:0px;overflow:hidden">
-                        <div style="padding:5px">
-                            <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
-                                3
-                            </div>
-                            &nbsp;
-                            Two times two is five? Really?
-                            Two times two is five? Really?
-                            Two times two is five? Really?
-                            Two times two is five? Really?
-                            Two times two is five? Really?
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div style="width:30%;float:left">
-                <div style="padding:5px 5px 10px 5px;text-align:center">
-                    danx0r
-                </div>
-                <div style="position:relative;background-color: green;">
-                    <div class="card" vp="1" vh="1" style="width:96%;height:46px;background-color:#b22;border:dashed;border-color:white;position:absolute;top:120px;overflow:hidden">
-                        <div style="padding:5px;color:white">
-                            <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
-                                125
-                            </div>
-                            <div style="float:left">
-                                &nbsp;
-                            </div>
-                            <div style="background-color:#787878;color:white;font-size:90%;padding: 0 2px 0 2px; float:left">
-                                2
-                            </div>
-                            &nbsp;
-                            Two times two is five? Really?
-                            Two times two is five? Really?
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div style="width:180px;float:left">
+            date/time<br/><br/>
+            {% for day in days %}
+                {{ day |safe }}<br/><br/>
+            {% endfor %}
         </div>
-        <button onclick="test(1.25)" style="position:absolute;top:500px;left:0px">zoom in</button>
-        <button onclick="test(.8)" style="position:absolute;top:500px;left:110px">zoom out</button>
+        {% for col in columns %}
+            <div style="width:300px;float:left">
+                {{ col.0 }}<br/><br>
+                {% for card in col.1 %}
+                    {{ card }}<br/><br>
+                {% endfor %}
+            </div>
+        {% endfor %}
         <script>
             mul=100.0;
             function test(f) {
