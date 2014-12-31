@@ -75,7 +75,9 @@ def parse_issues(issues):
     for iss in issues:
         if iss == None:
             continue
-        s = iss.title + iss.body if iss.body else ""
+        s = iss.title + " " + iss.body if iss.body else ""
+        for c in iss.comments:
+            s += " " + c
         i = s.rfind("TE:")
         if i >= 0:
             te = float(s[i+3:].split()[0])
@@ -144,6 +146,7 @@ def get_issues(user, pw, repo, owner=None, mil=None):
     for giss in gh.iter_repo_issues(owner, repo, **({'milestone': mil} if mil else {}) ):
         iss = issue(giss.number, str(giss.assignee), giss.title, giss.body)
         iss.labels = [str(x) for x in giss.labels]
+        iss.comments = [x.body for x in giss.iter_comments()]
         if giss.milestone:
             iss.mil_name = str(giss.milestone)
             if giss.milestone.due_on:

@@ -71,6 +71,9 @@ def home(request):
         asses.add(x.assignee)
     print "ASSES:", asses
     
+    #compute critical path
+    x, crit = compute_crit(issues)
+    
     #column for each assignee
     columns = []
     for ass in asses:
@@ -83,6 +86,17 @@ def home(request):
                 card['length'] = iss.estimate
                 card['start'], x = iss.crit_path()
                 card['start'] -= iss.estimate
+                card['BB'] = [x.num for x in iss.blocked_by]
+                if 'READY' in iss.labels:
+                    card['color'] = '#fac8a7'
+                if 'INPROGRESS' in iss.labels:
+                    card['color'] = '#fef2c0'
+                if 'TESTME' in iss.labels:
+                    card['color'] = '#c7def8'
+                if iss not in crit:
+                    card['border'] = 'dashed'
+                else:
+                    card['bcolor'] = '#ff00ff'
                 col[1].append(card)
         columns.append(col)
     context['columns'] = columns
