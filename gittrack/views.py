@@ -11,18 +11,18 @@ static_context = {
 
 def home(request):
     context = dict(static_context)
-    context['days'] = ["Friday<br/>2015/1/9","Monday<br/>2015/1/12"]
+    context['days'] = ["Friday<br/>2015/1/9","Monday<br/>2015/1/12","Tuesday<br/>2015/1/13"]
     context['columns'] = [
         [
             'danx0r',
             [
-                {'num':2, 'BB': 3, 'title': "Bad mojo bros!", 'start': 1, 'length': 1}
+                {'num':2, 'BB': 3, 'title': "Bad mojo bros!", 'start': 1.5, 'length': 1.5, 'color': "#cce"}
             ]
         ],
         [
             'morashon',
             [
-                {'num':3, 'title': "Return of the king bug", 'start': 0, 'length': 1.5}
+                {'num':3, 'title': "Return of the king bug", 'start': 0, 'length': 1.5, 'color': "#ecc"}
             ]
         ]
     ]

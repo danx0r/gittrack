@@ -3,25 +3,48 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>gittrack</title>
+        <style>
+            .card {
+                position: absolute;
+                width: 100%;
+                /*background-color: #ddd;*/
+            }
+            .inner {
+                /*border: solid;*/
+                background-color: #ddd;
+                height: 100%;
+            }
+        </style>
     </head>
-    <body style="font-family:sans">
+    <body style="font-family:sans" onkeypress="adjust(event.keyCode | event.charCode)">
         <div style="width:180px;float:left">
             date/time<br/><br/>
-            {% for day in days %}
-                {{ day |safe }}<br/><br/>
-            {% endfor %}
+            <div style="position:relative;width:100%">
+                {% for day in days %}
+                    <div class="card" vp="{{ forloop.counter0 }}" vh="1">
+                        <div class="inner">
+                            {{ day |safe }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
         {% for col in columns %}
             <div style="width:300px;float:left">
                 {{ col.0 }}<br/><br>
-                {% for card in col.1 %}
-                    {{ card }}<br/><br>
-                {% endfor %}
+                <div style="position:relative">
+                    {% for card in col.1 %}
+                        <div class="card" vp="{{ card.start }}" vh="{{ card.length }}" style="background-color:{{ card.color }}">
+                            {{ card }}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         {% endfor %}
+        <!-- <div class="card" vp="1" vh="1" style="color:red">TEST</div> -->
         <script>
             mul=100.0;
-            function test(f) {
+            function resize(f) {
                 mul *= f;
                 var els = document.querySelectorAll(".card");
                 // console.log(els);
@@ -32,12 +55,20 @@
                     var at = el.getAttribute('vh');
                     if (at != null) {
                         var vh = parseFloat(at);
-                        el.style.height = "" + (vh*mul-9+"px");
+                        el.style.height = "" + (vh*mul-0+"px");
                         console.log("HEIGHT:", mul, el.style.height)
                     }
                 }
             }
-            test(1);
+            function adjust(key) {
+                if(key == 45) {
+                    resize(0.8);
+                }
+                if(key == 61) {
+                    resize(1.25);
+                }
+            }
+            resize(1);
         </script>
     </body>
 </html>
