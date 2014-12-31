@@ -15,6 +15,7 @@ class issue(object):
     title = ""              #string
     body = ""               #string
     blocked_by = []         #list of ints / issues
+    auto_bb = []            #list of int id's of auto-blocked (don't display)
     estimate = 0.5          #float, days
     labels = []             #list of strings
     mil_name = ''           #string
@@ -103,6 +104,7 @@ def parse_issues(issues):
 #             print "prev for", iss, "is:", prev
             if prev != None and not prev.is_bb(iss):
                 iss.blocked_by.append(prev)
+                iss.auto_bb.append(prev.num)
 
     #DEBUG PRINTOUT
 #     for iss in issues:

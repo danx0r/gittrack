@@ -56,7 +56,7 @@ def home(request):
         start = due - datetime.timedelta(days=7)
     elif start and not due:
         due = start + datetime.timedelta(days=7)
-    else:
+    elif not start and not due:
         return HttpResponse("milestone needs a start and due date.  Add start date as ST:2011-1-1")
     print "start date:", start, "due date:", due
     days = []
@@ -95,7 +95,7 @@ def home(request):
                 card['length'] = iss.estimate
                 card['start'], x = iss.crit_path()
                 card['start'] -= iss.estimate
-                card['BB'] = [x.num for x in iss.blocked_by]
+                card['BB'] = [x.num for x in iss.blocked_by if x.num not in iss.auto_bb]
                 if 'READY' in iss.labels:
                     card['color'] = '#fac8a7'
                 if 'INPROGRESS' in iss.labels:
