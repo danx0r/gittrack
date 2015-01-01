@@ -148,8 +148,12 @@ def get_issues(user, pw, repo, owner=None, mil=None):
         owner = user
     if mil:
         gr = get_ghrepo(gh, owner, repo)
+        if not gr:
+            print "ERROR: repo %s not found" % repo
+            return []
         mil = get_milestone_id(gr, mil)
         if not mil:
+            print "ERROR: milestone not found"
             return []
     issues = []
     for giss in gh.iter_repo_issues(owner, repo, **({'milestone': mil} if mil else {}) ):
