@@ -98,10 +98,13 @@ def home(request):
                 card['BB'] = [x.num for x in iss.blocked_by if x.num not in iss.auto_bb]
                 if 'READY' in iss.labels:
                     card['color'] = '#fac8a7'
-                if 'INPROGRESS' in iss.labels:
+                elif 'INPROGRESS' in iss.labels:
                     card['color'] = '#fef2c0'
-                if 'TESTME' in iss.labels:
+                elif 'TESTME' in iss.labels:
                     card['color'] = '#c7def8'
+                else:
+                    card['color'] = '#c33'
+                    card['texcol'] = 'white'
                 if iss not in crit:
                     card['border'] = 'dashed'
                 else:

@@ -54,7 +54,7 @@
                 <div style="position:relative">
                     {% for card in col.1 %}
                         <div class="card" vp="{{ card.start }}" vh="{{ card.length }}">
-                            <div class="inner" style="background-color:{{ card.color }}; border-style:{{ card.border }}; border-color:{{ card.bcolor }}">
+                            <div class="inner" style="background-color:{{ card.color }}; color:{{ card.texcol }}; border-style:{{ card.border }}; border-color:{{ card.bcolor }}">
                                 <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
                                     {{ card.num }}
                                 </div>
