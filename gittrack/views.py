@@ -103,7 +103,7 @@ def home(request):
                 elif 'TESTME' in iss.labels:
                     card['color'] = '#c7def8'
                 else:
-                    card['color'] = '#f89'
+                    card['color'] = '#fab'
                 if iss not in crit:
                     card['border'] = 'dashed'
                 else:
