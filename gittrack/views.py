@@ -21,7 +21,6 @@ def home(request):
     user = request.GET['user']
     repo = request.GET['repo']
     mil = request.GET['milestone']
-    owner = request.GET['owner'] if 'owner' in request.GET else user
     pw = request.GET['pw']
 
     #very basic security
@@ -32,6 +31,8 @@ def home(request):
         print "DEBUG using alias", user
     else:
         print "DEBUG not using alias, config=", config
+
+    owner = request.GET['owner'] if 'owner' in request.GET else user
         
     print ("REPO:", repo, "OWNER:", owner, "USER:", user, "MILESTONE:", mil)
     issues = get_issues(user, pw, repo, owner, mil)
