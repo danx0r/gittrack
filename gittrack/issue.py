@@ -35,6 +35,7 @@ class issue(object):
         self.mil_name = ''
         self.mil_start = ''
         self.mil_due = ''
+        self.closed = False
 
     def crit_path(self):
         days = 0
@@ -160,7 +161,7 @@ def get_issues(user, pw, repo, owner=None, mil=None):
         if not mil:
             return "ERROR: milestone %s not found" % tmil
     issues = []
-    for giss in gh.iter_repo_issues(owner, repo, **({'milestone': mil} if mil else {}) ):
+    for giss in gh.iter_repo_issues(owner, repo, **({'state': 'all', 'milestone': mil} if mil else {'state': 'all'}) ):
         iss = issue(giss.number, str(giss.assignee) if giss.assignee else '', giss.title, giss.body)
         iss.labels = [str(x) for x in giss.labels]
         iss.comments = [x.body for x in giss.iter_comments()]
@@ -173,6 +174,8 @@ def get_issues(user, pw, repo, owner=None, mil=None):
                 s = giss.milestone.description[i:].split()[0]
                 print "PARSE DATE:", s
                 iss.mil_start = tzlocal.get_localzone().localize(parse_dt(s)).astimezone(pytz.utc) #sheesh, is that really necessary?
+        if giss.state == 'closed':
+            iss.closed = True
         issues.append(iss)
     return issues
 

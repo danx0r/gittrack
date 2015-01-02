@@ -100,7 +100,9 @@ def home(request):
                 card['start'], x = iss.crit_path()
                 card['start'] -= iss.estimate
                 card['BB'] = [x.num for x in iss.blocked_by if x.num not in iss.auto_bb]
-                if 'READY' in iss.labels:
+                if iss.closed:
+                    card['color'] = '#9f9'
+                elif 'READY' in iss.labels:
                     card['color'] = '#fac8a7'
                 elif 'INPROGRESS' in iss.labels:
                     card['color'] = '#fef2c0'
