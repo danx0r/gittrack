@@ -29,7 +29,10 @@ def home(request):
     #very basic security
     print "PATH:", sys.path
     if config and user in config.user:
-        pw = config.user[user]['pw'][pw]
+        if pw in config.user[user]['pw']:
+            pw = config.user[user]['pw'][pw]
+        else:
+            return HttpResponse("bad password")
         user = config.user[user]['user']
         print "DEBUG using alias", user
     else:
