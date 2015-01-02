@@ -68,7 +68,7 @@ def home(request):
     while today <= due:
         day = {}
         day['date'] = today.strftime("%Y-%m-%d")
-        day['dow'] = today.strftime("%A")
+        day['dow'] = today.strftime("%A")[:3]
         day['color'] = "#ddd"
         days.append(day)
         today += datetime.timedelta(days = 1)

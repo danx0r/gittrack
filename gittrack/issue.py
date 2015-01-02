@@ -168,9 +168,10 @@ def get_issues(user, pw, repo, owner=None, mil=None):
             iss.mil_name = str(giss.milestone)
             if giss.milestone.due_on:
                 iss.mil_due = giss.milestone.due_on
-            if "ST:" in giss.milestone.description:
-                i = giss.milestone.description.find("ST:") + 3
+            if "START:" in giss.milestone.description:
+                i = giss.milestone.description.find("START:") + 6
                 s = giss.milestone.description[i:].split()[0]
+                print "PARSE DATE:", s
                 iss.mil_start = tzlocal.get_localzone().localize(parse_dt(s)).astimezone(pytz.utc) #sheesh, is that really necessary?
         issues.append(iss)
     return issues

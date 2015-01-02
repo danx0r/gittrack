@@ -30,7 +30,7 @@
         </style>
     </head>
     <body style="font-family:sans" onkeypress="adjust(event.keyCode | event.charCode)">
-        <div style="width:130px;float:left">
+        <div style="width:160px;float:left">
             <div class="colhead">
                 Date
             </div>
@@ -39,7 +39,6 @@
                     <div class="card" vp="{{ forloop.counter0 }}" vh="1">
                         <div class="inner" style="background-color:{{ day.color }}; color:{{ day.texcol }}; border-color: #888">
                             {{ day.dow }}
-                            <br/>
                             {{ day.date }}
                         </div>
                     </div>
