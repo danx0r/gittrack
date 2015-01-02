@@ -19,9 +19,12 @@ static_context = {
 def home(request):
     context = dict(static_context)
     user = request.GET['user']
-    repo = request.GET['repo']
-    mil = request.GET['milestone']
     pw = request.GET['pw']
+    repo = request.GET['repo']
+    if 'milestone' in request.GET:
+        mil = request.GET['milestone']
+    else:
+        mil = None
 
     #very basic security
     print "PATH:", sys.path
