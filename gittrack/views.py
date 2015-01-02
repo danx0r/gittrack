@@ -24,7 +24,7 @@ def home(request):
     if 'milestone' in request.GET:
         mil = request.GET['milestone']
     else:
-        mil = None
+        return HttpResponse("Must specify a milestone")
 
     #very basic security
     print "PATH:", sys.path
@@ -42,6 +42,8 @@ def home(request):
         
     print ("REPO:", repo, "OWNER:", owner, "USER:", user, "MILESTONE:", mil)
     issues = get_issues(user, pw, repo, owner, mil)
+    if type(issues) != list:
+        return HttpResponse(issues)
     parse_issues(issues)
     for iss in issues:
         print "ISSUE:", iss.bigrepr()

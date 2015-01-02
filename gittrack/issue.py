@@ -151,15 +151,14 @@ def get_issues(user, pw, repo, owner=None, mil=None):
     gh = github3.login(user, password=pw)
     if not owner:
         owner = user
+    gr = get_ghrepo(gh, owner, repo)
+    if not gr:
+        return "ERROR: repo %s/%s not found (or %s lacks access)" % (owner, repo, user)
     if mil:
-        gr = get_ghrepo(gh, owner, repo)
-        if not gr:
-            print "ERROR: repo %s not found" % repo
-            return []
+        tmil = mil
         mil = get_milestone_id(gr, mil)
         if not mil:
-            print "ERROR: milestone not found"
-            return []
+            return "ERROR: milestone %s not found" % tmil
     issues = []
     for giss in gh.iter_repo_issues(owner, repo, **({'milestone': mil} if mil else {}) ):
         iss = issue(giss.number, str(giss.assignee) if giss.assignee else '', giss.title, giss.body)
