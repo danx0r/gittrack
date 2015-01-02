@@ -86,14 +86,18 @@ def parse_issues(issues):
         s = iss.title + " " + iss.body if iss.body else ""
         for c in iss.comments:
             s += " " + c
-        i = s.rfind("TE:")
+        i = s.rfind("ESTIMATE DAYS:")
         if i >= 0:
-            te = float(s[i+3:].split()[0])
+            te = float(s[i+14:].split()[0])
             iss.estimate = te
+        else:
+            i = s.lower().rfind(" time estimate:")
+            if i >= 0:
+                te = float(s[i+15:].split()[0])
+                iss.estimate = te
         iss.blocked_by = []
-        while "BB:" in s:
-#             print s
-            i = s.find("BB:") + 3
+        while "BLOCKED BY:" in s:
+            i = s.find("BLOCKED BY:") + 11
             s = s[i:]
             bb = int(s.split()[0])
             iss.blocked_by.append(map[bb])
