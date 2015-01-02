@@ -100,7 +100,8 @@ def parse_issues(issues):
             i = s.find("BLOCKED BY:") + 11
             s = s[i:]
             bb = int(s.split()[0])
-            iss.blocked_by.append(map[bb])
+            if bb in map:
+                iss.blocked_by.append(map[bb])
 
     for iss in issues:
         #determine if any of our bb's are assigned to us
