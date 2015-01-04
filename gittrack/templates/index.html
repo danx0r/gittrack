@@ -37,7 +37,7 @@
             <div style="position:relative;width:100%">
                 {% for day in days %}
                     <div class="card" vp="{{ forloop.counter0 }}" vh="1">
-                        <div class="inner" style="background-color:{{ day.color }}; color:{{ day.texcol }}; border-color: #888">
+                        <div class="inner" style="background-color:{{ day.color }}; border-color:{{ day.color }}; color:{{ day.texcol }}">
                             {{ day.dow }}
                             {{ day.date }}
                         </div>
