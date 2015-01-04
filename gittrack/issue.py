@@ -32,6 +32,7 @@ class issue(object):
         self.blocked_by = bb
         self.estimate = est
         self.labels = []
+        self.comments = []
         self.blocked_by = []
         self.auto_bb = []
         self.mil_name = ''

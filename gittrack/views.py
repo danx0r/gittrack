@@ -84,6 +84,8 @@ def home(request):
     asses = set()
     for x in issues:
         asses.add(x.assignee)
+    asses = list(asses)
+    asses.sort()
     print "ASSES:", asses
     
     #compute critical path
@@ -92,12 +94,15 @@ def home(request):
     #column for each assignee
     columns = []
     for ass in asses:
-        col = [ass if ass else "UNASSIGNED", []]
+        col = [ass if ass else "_UNASSIGNED", []]
         for iss in issues:
             if iss.assignee == ass:
                 card = {}
                 card['num'] = iss.num
                 card['title'] = iss.title           # + "|"+str(iss.auto_bb)
+                card['body'] = iss.body
+                card['comments'] = iss.comments
+                card['labels'] = iss.labels
                 card['length'] = iss.estimate
                 card['start'], x = iss.crit_path()
                 card['start'] -= iss.estimate
