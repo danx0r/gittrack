@@ -7,6 +7,8 @@ from dateutil.parser import parse as parse_dt
 import github3
 
 def clean_cr(s):
+    if s == None:
+        return ''
     return s.replace('\r', '\n').rstrip()
 
 class issue(object):
