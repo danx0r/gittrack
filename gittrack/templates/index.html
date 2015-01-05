@@ -52,6 +52,48 @@
 			    z-index:1002;
 			    overflow: auto;
 			}
+			.detail_title {
+				background-color: #998;
+				color: white;
+				padding-left: 10px;
+				padding-right: 10px;
+				padding-top: 3px;
+				padding-bottom: 2px;
+				margin: 6px;
+				margin-bottom: 18px;
+			}
+			.detail_body {
+				background-color: #bbbbbb;
+				padding-left: 10px;
+				padding-right: 10px;
+				padding-top: 3px;
+				padding-bottom: 2px;
+				margin: 6px;
+				margin-bottom: 11px;
+			}
+			.detail_comment {
+				background-color: #ddd;
+				padding-left: 10px;
+				padding-right: 10px;
+				padding-top: 3px;
+				padding-bottom: 2px;
+				margin: 6px;
+			}
+			.detail_label {
+				float: left;
+				background-color: #333;
+				color: white;
+				padding-left: 3px;
+				padding-right: 3px;
+				padding-top: 2px;
+				padding-bottom: 2px;
+				margin-top: 6px;
+				margin-left: 4px;
+			}
+			p {
+				margin: 0px;
+				padding: 0px;
+			}
         </style>
     </head>
     <body style="font-family:sans" onkeydown="handle_key(event.keyCode | event.charCode)">
@@ -103,15 +145,17 @@
                                 <span style="font-size: 30%">&nbsp;</span>
                                 {{ card.title }}
 						    	<div id="body_{{ card.num }}" style="display:none">
-						    		TITLE: {{ card.title }}
-							    	<br/><br/>
-						    		BODY: {{ card.body }}
+						    		<div class="detail_title">{{ card.title|linebreaks }}</div>
+						    		{% if card.body %}
+										<div class="detail_body">{{ card.body|linebreaks }}</div>
+								    {% endif %}
 							    	{% for comment in card.comments %}
-								    	<br/><br/>
-								    	COMMENT {{ forloop.counter }}: {{ comment }}
+										<div class="detail_comment">{{ comment|linebreaks }}</div>
 								    {% endfor %}
-							    	<br/><br/>
-						    		LABELS: {{ card.labels }}
+							    	<br/>
+							    	{% for label in card.labels %}
+										<div class="detail_label">{{ label }}</div>
+							    	{% endfor %}
 						    	</div>
                             </div>
                         </div>
