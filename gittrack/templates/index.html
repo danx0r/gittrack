@@ -96,7 +96,7 @@
 			}
         </style>
     </head>
-    <body style="font-family:sans" onkeydown="handle_key(event.keyCode | event.charCode)">
+    <body style="font-family:sans;min-width:{{ tot_width }}px" onkeydown="handle_key(event.keyCode | event.charCode)">
     	<!-- <div id="comments_1" style="display:none">{{ columns.0.1.1.body }}</div> -->
 		<div id="light" class="white_content">
 			<a href="javascript:void(0)" onclick="hide_boxy()">
@@ -107,7 +107,7 @@
 		</div>
 		<div id="fade" class="black_overlay" onclick="hide_boxy()"></div>
 		<!-- <a href="javascript:void(0)" onclick='show_boxy("comments_1")'>Show PopUp</a> -->
-        <div style="width:160px;float:left">
+        <div style="width:{{ day_width }}px;float:left">
             <div class="colhead">
                 Date
             </div>
@@ -123,7 +123,7 @@
             </div>
         </div>
         {% for col in columns %}
-            <div style="width:300px;float:left">
+            <div style="width:{{ card_width }}px;float:left">
                 <div class="colhead">
                     {{ col.0 }}
                 </div>

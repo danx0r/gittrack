@@ -11,6 +11,9 @@ try:
 except:
     config = None
 
+DAYWIDTH = 180
+CARDWIDTH = 300
+
 static_context = {
     'images': 'static/images/',
     'scripts': 'static/scripts/',
@@ -124,5 +127,8 @@ def home(request):
                 col[1].append(card)
         columns.append(col)
     context['columns'] = columns
+    context['day_width'] = DAYWIDTH
+    context['card_width'] = CARDWIDTH
+    context['tot_width'] = DAYWIDTH + CARDWIDTH * len(context['columns'])
 
     return render(request, 'gittrack/templates/index.html', context)
