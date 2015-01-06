@@ -70,11 +70,16 @@ def home(request):
     print "start date:", start, "due date:", due
     days = []
     today = start
+    now = datetime.datetime.utcnow()
+    nowday = tzlocal.get_localzone().localize(datetime.datetime(now.year, now.month, now.day)).astimezone(pytz.utc)  #yep, 'tis a mouthful
     while today <= due:
         day = {}
         day['date'] = today.strftime("%Y-%m-%d")
         day['dow'] = today.strftime("%A")[:3]
-        day['color'] = "#ddd"
+        if today < nowday:
+            day['color'] = "#ccc"
+        else:
+            day['color'] = "#eee"
         days.append(day)
         today += datetime.timedelta(days = 1)
         #everybody's working 4 the wkend
