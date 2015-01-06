@@ -156,6 +156,9 @@
 							    	{% for label in card.labels %}
 										<div class="detail_label">{{ label }}</div>
 							    	{% endfor %}
+							    	{% if card.closed %}
+							    		<div class="detail_label" style="background-color:#666">CLOSED</div>
+							    	{% endif %}
 						    	</div>
                             </div>
                         </div>
