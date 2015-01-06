@@ -77,9 +77,9 @@ def home(request):
         day['date'] = today.strftime("%Y-%m-%d")
         day['dow'] = today.strftime("%A")[:3]
         if today < nowday:
-            day['color'] = "#ccc"
+            day['color'] = "#bbb"
         else:
-            day['color'] = "#eee"
+            day['color'] = "#ddd"
         days.append(day)
         today += datetime.timedelta(days = 1)
         #everybody's working 4 the wkend
