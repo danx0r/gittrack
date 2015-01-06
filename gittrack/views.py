@@ -129,6 +129,7 @@ def home(request):
     context['columns'] = columns
     context['day_width'] = DAYWIDTH
     context['card_width'] = CARDWIDTH
-    context['tot_width'] = DAYWIDTH + CARDWIDTH * len(context['columns'])
+    context['tot_width_pad'] = DAYWIDTH + CARDWIDTH * len(context['columns'])
+    context['tot_width'] = context['tot_width_pad'] -6
 
     return render(request, 'gittrack/templates/index.html', context)
