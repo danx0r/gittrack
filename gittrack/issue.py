@@ -83,11 +83,10 @@ def parse_issues(issues):
         if iss == None:
             continue
         map[iss.num] = iss
-
     for iss in issues:
         if iss == None:
             continue
-        s = iss.title + " " + iss.body if iss.body else ""
+        s = iss.title + (" " + iss.body if iss.body else "")
         for c in iss.comments:
             s += " " + c
         i = s.rfind("ESTIMATE DAYS:")
@@ -104,6 +103,7 @@ def parse_issues(issues):
             i = s.find("BLOCKED BY:") + 11
             s = s[i:]
             bb = int(s.split()[0])
+            print "BB:", bb
             if bb in map:
                 iss.blocked_by.append(map[bb])
 
@@ -183,16 +183,17 @@ def get_issues(user, pw, repo, owner=None, mil=None):
     return issues
 
 if __name__ == '__main__':
-#     issues = [
-#         None,                    #ensure index = num
-#         issue(1, 'danx0r', "Fursst task TE:1.5 BB:2"),
-#         issue(2, 'danx0r', "Secnd task TE:1"),
-#         issue(4, 'silas', "Third task", "TE:2"),
-#         issue(5, 'loren', "FORTH task", "TE:1 BB:2"),
-#     ]
-    issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else sys.argv[1], sys.argv[5] if len(sys.argv) > 5 else None)
+    issues = [
+        issue(1, 'danx0r', "Fursst task"),
+        issue(2, 'danx0r', "Secnd task"),
+        issue(3, 'danx0r', "FORTH task BLOCKED BY: 4"),
+        issue(4, 'danx0r', "Third task"),
+    ]
+#     issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else sys.argv[1], sys.argv[5] if len(sys.argv) > 5 else None)
     parse_issues(issues)
     for iss in issues:
         print "ISSUE:", iss.bigrepr()
     crit, path = compute_crit(issues)
-    print "critical path days: %.2f path: %s" % (crit, [x.bigrepr() for x in path])
+    print "critical path days: %.2f path:" % crit
+    for x in path:
+        print " ", x.bigrepr(), x.auto_bb
