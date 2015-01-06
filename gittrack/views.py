@@ -45,15 +45,15 @@ def home(request):
     owner = request.GET['owner'] if 'owner' in request.GET else user
     context['owner'] = owner
         
-    print ("REPO:", repo, "OWNER:", owner, "USER:", user, "MILESTONE:", mil)
+#     print ("REPO:", repo, "OWNER:", owner, "USER:", user, "MILESTONE:", mil)
     issues = get_issues(user, pw, repo, owner, mil)
     if type(issues) != list:
         return HttpResponse(issues)
     parse_issues(issues)
-    for iss in issues:
-        print "ISSUE:", iss.bigrepr()
+#     for iss in issues:
+#         print "ISSUE:", iss.bigrepr()
     crit, path = compute_crit(issues)
-    print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
+#     print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
 
     if not issues:
         return HttpResponse("no issues found")
@@ -67,7 +67,7 @@ def home(request):
         due = start + datetime.timedelta(days=7)
     elif not start and not due:
         return HttpResponse("milestone needs a start and due date.  Add start date as ST:2011-1-1")
-    print "start date:", start, "due date:", due
+#     print "start date:", start, "due date:", due
     days = []
     today = start
     now = datetime.datetime.utcnow()
@@ -85,7 +85,7 @@ def home(request):
         #everybody's working 4 the wkend
         if today.strftime("%A") == 'Saturday':
             today += datetime.timedelta(days = 2)            
-    print "DAYS:", days
+#     print "DAYS:", days
     context['days'] = days
     
     #compute list of all assignees
@@ -94,7 +94,7 @@ def home(request):
         asses.add(x.assignee)
     asses = list(asses)
     asses.sort(key = lambda x: x.lower())
-    print "ASSES:", asses
+#     print "ASSES:", asses
     
     #compute critical path
     x, crit = compute_crit(issues)

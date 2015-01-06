@@ -105,7 +105,7 @@ def parse_issues(issues):
             wrds = s.split()
             for b in wrds:
                 bb = int(b.replace(',', ""))
-                print "BB:", bb
+#                 print "BB:", bb
                 if bb in map:
                     iss.blocked_by.append(map[bb])
                 if ',' not in b:
@@ -179,7 +179,7 @@ def get_issues(user, pw, repo, owner=None, mil=None):
             if "START:" in giss.milestone.description:
                 i = giss.milestone.description.find("START:") + 6
                 s = giss.milestone.description[i:].split()[0]
-                print "PARSE DATE:", s
+#                 print "PARSE DATE:", s
                 iss.mil_start = tzlocal.get_localzone().localize(parse_dt(s)).astimezone(pytz.utc) #sheesh, is that really necessary?
         if giss.state == 'closed':
             iss.closed = True
