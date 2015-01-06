@@ -102,10 +102,14 @@ def parse_issues(issues):
         while "BLOCKED BY:" in s:
             i = s.find("BLOCKED BY:") + 11
             s = s[i:]
-            bb = int(s.split()[0])
-            print "BB:", bb
-            if bb in map:
-                iss.blocked_by.append(map[bb])
+            wrds = s.split()
+            for b in wrds:
+                bb = int(b.replace(',', ""))
+                print "BB:", bb
+                if bb in map:
+                    iss.blocked_by.append(map[bb])
+                if ',' not in b:
+                    break
 
     for iss in issues:
         #determine if any of our bb's are assigned to us

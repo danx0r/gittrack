@@ -85,7 +85,7 @@ def home(request):
     for x in issues:
         asses.add(x.assignee)
     asses = list(asses)
-    asses.sort()
+    asses.sort(key = lambda x: x.lower())
     print "ASSES:", asses
     
     #compute critical path
