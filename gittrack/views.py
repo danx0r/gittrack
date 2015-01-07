@@ -70,8 +70,13 @@ def home(request):
 #     print "start date:", start, "due date:", due
     days = []
     today = start
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now()
     nowday = tzlocal.get_localzone().localize(datetime.datetime(now.year, now.month, now.day)).astimezone(pytz.utc)  #yep, 'tis a mouthful
+#     print "LOCAL:", tzlocal.get_localzone()
+#     print "START:", start 
+#     print "NOW:", now 
+#     print "NOWDAY:", nowday 
+#     print "DUE:", due
     while today <= due:
         day = {}
         day['date'] = today.strftime("%Y-%m-%d")
