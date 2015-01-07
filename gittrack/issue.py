@@ -91,26 +91,26 @@ def parse_issues(issues):
             s += " " + c
         i = s.rfind("ESTIMATE DAYS:")
         if i >= 0:
-            te = float(s[i+14:].split()[0])
-            iss.estimate = te
-        else:
-            i = s.lower().rfind(" time estimate:")
-            if i >= 0:
-                te = float(s[i+15:].split()[0])
+            try:
+                te = float(s[i+14:].split()[0])
                 iss.estimate = te
+            except:
+                print "unparsed ESTIMATE DAYS:"
         iss.blocked_by = []
         while "BLOCKED BY:" in s:
-            i = s.find("BLOCKED BY:") + 11
-            s = s[i:]
-            wrds = s.split()
-            for b in wrds:
-                bb = int(b.replace(',', ""))
-#                 print "BB:", bb
-                if bb in map:
-                    iss.blocked_by.append(map[bb])
-                if ',' not in b:
-                    break
-
+            try:
+                i = s.find("BLOCKED BY:") + 11
+                s = s[i:]
+                wrds = s.split()
+                for b in wrds:
+                    bb = int(b.replace(',', ""))
+    #                 print "BB:", bb
+                    if bb in map:
+                        iss.blocked_by.append(map[bb])
+                    if ',' not in b:
+                        break
+            except:
+                print "unparsed BLOCKED BY:"
     for iss in issues:
         #determine if any of our bb's are assigned to us
         flag = False
