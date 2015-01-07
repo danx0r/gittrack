@@ -147,7 +147,7 @@
 						    	<div id="body_{{ card.num }}" style="display:none">
 						    		<div class="detail_title">{{ card.title|linebreaks }}</div>
 						    		{% if card.body %}
-										<div class="detail_body">{{ card.body|linebreaks }}</div>
+										<div class="detail_body">{{ card.body|safe }}</div>
 								    {% endif %}
 							    	{% for comment in card.comments %}
 										<div class="detail_comment">{{ comment|linebreaks }}</div>
@@ -159,6 +159,10 @@
 							    	{% if card.closed %}
 							    		<div class="detail_label" style="background-color:#666">CLOSED</div>
 							    	{% endif %}
+							    	<br/><br/>
+							    	<div style="float:clear;margin-top:8px">
+								    	<p>{{ card.link|safe }}</p>
+							    	</div>
 						    	</div>
                             </div>
                         </div>

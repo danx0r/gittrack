@@ -110,6 +110,7 @@ def home(request):
                 card['title'] = iss.title           # + "|"+str(iss.auto_bb)
                 card['body'] = iss.body
                 card['comments'] = iss.comments
+                card['link'] = '<a href="https://github.com/%s/%s/issues/%d" target="_blank">go to issue on github</a>' % (owner, repo, iss.num)
                 card['labels'] = iss.labels
                 card['length'] = iss.estimate
                 card['start'], x = iss.crit_path()
