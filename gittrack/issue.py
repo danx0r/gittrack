@@ -184,6 +184,7 @@ def get_issues(user, pw, repo, owner=None, mil=None):
         if giss.state == 'closed':
             iss.closed = True
         issues.append(iss)
+#     issues.sort(key = lambda x: x.num)
     return issues
 
 if __name__ == '__main__':

@@ -117,7 +117,7 @@ def home(request):
                 card['comments'] = iss.comments
                 card['link'] = '<a href="https://github.com/%s/%s/issues/%d" target="_blank">go to issue on github</a>' % (owner, repo, iss.num)
                 card['labels'] = iss.labels
-                card['length'] = iss.estimate
+                card['length'] = max(iss.estimate, 0.45)
                 card['start'], x = iss.crit_path()
                 card['start'] -= iss.estimate
                 card['BB'] = [x.num for x in iss.blocked_by if x.num not in iss.auto_bb]
@@ -138,6 +138,7 @@ def home(request):
                 else:
                     card['bcolor'] = '#ff00ff'
                 col[1].append(card)
+        col[1].sort(key = lambda x: x['start'])
         columns.append(col)
     context['columns'] = columns
     context['day_width'] = DAYWIDTH
