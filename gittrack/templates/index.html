@@ -193,7 +193,9 @@
                     var at = el.getAttribute('vh');
                     if (at != null) {
                         var vh = parseFloat(at);
-                        el.style.height = "" + (vh*mul-0+"px");
+                        vh *= mul;
+                        vh = Math.max(vh, 33);
+                        el.style.height = "" + vh + "px";
                         // console.log("HEIGHT:", mul, el.style.height)
                     }
                 }
