@@ -126,7 +126,7 @@ def home(request):
                     card['closed'] = True
                     card['color'] = '#9f9'
                 elif 'READY' in iss.labels:
-                    card['color'] = '#fac8a7'
+                    card['color'] = '#f0c0a7'
                 elif 'INPROGRESS' in iss.labels:
                     card['color'] = '#fef2c0'
                 elif 'TESTME' in iss.labels:
