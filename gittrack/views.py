@@ -147,3 +147,30 @@ def home(request):
     context['tot_width'] = context['tot_width_pad'] -6
 
     return render(request, 'gittrack/templates/index.html', context)
+
+def iss(request):
+    context = dict(static_context)
+    user = request.GET['user']
+    pw = request.GET['pw']
+    repo = request.GET['repo']
+    iss = int(request.GET['issue'])
+    context['repo'] = repo
+
+    #very basic security
+    print "PATH:", sys.path
+    if config and user in config.user:
+        if pw in config.user[user]['pw']:
+            pw = config.user[user]['pw'][pw]
+        else:
+            return HttpResponse("bad password")
+        user = config.user[user]['user']
+        print "DEBUG using alias", user
+    else:
+        print "DEBUG not using alias, config=", config
+
+    owner = request.GET['owner'] if 'owner' in request.GET else user
+    context['owner'] = owner
+        
+    giss = get_issue(user, pw, repo, iss, owner)
+    print "DEBUG get_issue returns:", repr(giss)
+    return HttpResponse([giss, giss.labels, giss.milestone], content_type="text/plain")

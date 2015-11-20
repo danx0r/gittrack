@@ -187,6 +187,18 @@ def get_issues(user, pw, repo, owner=None, mil=None):
 #     issues.sort(key = lambda x: x.num)
     return issues
 
+def get_issue(user, pw, repo, iss, owner=None):
+    global gh, giss
+    gh = github3.login(user, password=pw)
+    if not owner:
+        owner = user
+    gr = get_ghrepo(gh, owner, repo)
+    if not gr:
+        return "ERROR2: repo %s/%s not found (or %s lacks access)" % (owner, repo, user)
+    giss = gh.issue(owner, repo, iss)
+    print "DEBUG get_issue user=%s owner=%s repo=%s iss=%d giss=%s" % (user, owner, repo, iss, giss)
+    return giss
+
 if __name__ == '__main__':
     issues = [
         issue(1, 'danx0r', "Fursst task"),
