@@ -170,7 +170,10 @@ def iss(request):
 
     owner = request.GET['owner'] if 'owner' in request.GET else user
     context['owner'] = owner
-        
+       
     giss = get_issue(user, pw, repo, iss, owner)
     print "DEBUG get_issue returns:", repr(giss)
-    return HttpResponse([giss, giss.labels, giss.milestone], content_type="text/plain")
+    if type(giss) in (str, unicode, type(None)):
+        return HttpResponse(giss)
+    else:
+        return HttpResponse("issue#=%d %s %s milestone=%s assigned=%s labels=%s" % (iss, giss.state, giss.title, giss.milestone, giss.assignee, giss.labels), content_type="text/plain")
