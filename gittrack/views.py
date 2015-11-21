@@ -176,4 +176,4 @@ def iss(request):
     if type(giss) in (str, unicode, type(None)):
         return HttpResponse(giss)
     else:
-        return HttpResponse("issue#=%d %s %s milestone=%s assigned=%s labels=%s" % (iss, giss.state, giss.title, giss.milestone, giss.assignee, giss.labels), content_type="text/plain")
+        return HttpResponse("issue#=%d %s |%s| milestone=%s assigned=%s labels=%s" % (iss, giss.state, giss.title, giss.milestone, giss.assignee, giss.labels), content_type="text/plain")
