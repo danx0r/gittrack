@@ -148,7 +148,7 @@ def home(request):
 
     return render(request, 'gittrack/templates/index.html', context)
 
-def iss(request):
+def view_issue(request):
     context = dict(static_context)
     user = request.GET['user']
     pw = request.GET['pw']
