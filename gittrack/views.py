@@ -178,3 +178,43 @@ def view_issue(request):
     else:
         return HttpResponse("issue#=%d %s |%s| milestone=%s assigned=%s labels=%s\n%s" % 
                             (iss, giss.state, giss.title, giss.milestone, giss.assignee, giss.labels, giss.body), content_type="text/plain")
+
+def view_top(request):
+    context = dict(static_context)
+    user = request.GET['user']
+    pw = request.GET['pw']
+    repo = request.GET['repo']
+    iss = int(request.GET['issue'])
+    context['repo'] = repo
+
+    #very basic security
+    print "PATH:", sys.path
+    if config and user in config.user:
+        if pw in config.user[user]['pw']:
+            pw = config.user[user]['pw'][pw]
+        else:
+            return HttpResponse("bad password")
+        user = config.user[user]['user']
+        print "DEBUG using alias", user
+    else:
+        print "DEBUG not using alias, config=", config
+
+    owner = request.GET['owner'] if 'owner' in request.GET else user
+    context['owner'] = owner
+       
+    giss = get_issue(user, pw, repo, iss, owner)
+    print "DEBUG get_issue returns:", repr(giss)
+    if type(giss) in (str, unicode, type(None)):
+        return HttpResponse(giss)
+    else:
+        lines = giss.body.split("\n")
+        desc = ""
+        for line in lines:
+            if line.find("SUBTASKS") == 0:
+                subs = line.split()[1:]
+            else:
+                desc += line + "\n"
+        labs = [str(lab) for lab in giss.labels]
+        resp = "issue#=%d %s |%s| milestone=%s assigned=%s labels=%s<br/>%s<br/>subtasks: %s" % (
+            iss, giss.state, giss.title, giss.milestone, giss.assignee, labs, desc.rstrip(), subs)
+        return HttpResponse(resp, content_type="text/html")
