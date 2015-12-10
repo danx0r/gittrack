@@ -16,10 +16,10 @@ def get_comments(user, pw, repo, issue, owner=None):
         return "ERROR: repo %s/%s not found (or %s lacks access)" % (owner, repo, user)
     comments = []
     iss = gh.issue(owner, repo, issue)
-    print iss
+#     print iss
     for com in iss.iter_comments():
-        print com
-#     return issues
+        comments.append(com)
+    return comments
 
 if __name__ == '__main__':
-    get_comments("danx0r", sys.argv[1], "testrepo", 2)
+    print [x.body_text for x in get_comments("danx0r", sys.argv[1], "testrepo", 2)]
