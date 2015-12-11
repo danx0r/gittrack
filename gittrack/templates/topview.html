@@ -5,11 +5,19 @@
         <title>{{ repo }}|{{ owner }}</title>
     </head>
     <body>
-    	{{ issue_title }}
+    	{{ issue.title }}
+    	{% if issue.body %}
+	    	|
+	    	{{ issue.body }}
+	    {% endif %}
     	<br/>
-    	{% for sub in subtasks %}
+    	{% for issue in subtasks %}
 	    	<br/>
-	    	{{ sub }}
+	    	{{ issue.title }}
+	    	{% if issue.body %}
+		    	|
+		    	{{ issue.body }}
+		    {% endif %}
 	    {% endfor %}
     </body>
 </html>

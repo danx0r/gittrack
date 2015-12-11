@@ -207,6 +207,7 @@ def view_top(request):
     if type(giss) in (str, unicode, type(None)):
         return HttpResponse(giss)
     else:
+        subs = []
         if giss.body:
             lines = giss.body.split("\n")
             desc = ""
@@ -215,14 +216,13 @@ def view_top(request):
                     subs = line.split()[1:]
                 else:
                     desc += line + "\n"
-        else:
-            subs = []
+            giss.body = desc
         labs = [str(lab) for lab in giss.labels]
-        context['issue_title'] = giss.title
+        context['issue'] = giss
         context['subtasks'] = []
         for i in range(len(subs)):
             iss = int(subs[i])
             giss = get_issue(user, pw, repo, iss, owner)
-            context['subtasks'].append(giss.title)
+            context['subtasks'].append(giss)
         return render(request, 'gittrack/templates/topview.html', context)
 
