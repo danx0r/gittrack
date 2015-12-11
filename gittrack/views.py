@@ -215,13 +215,18 @@ def view_top(request):
             else:
                 desc += line + "\n"
         labs = [str(lab) for lab in giss.labels]
-        resp = "issue#=%d %s |%s| milestone=%s assigned=%s labels=%s<br/>%s<br/>subtasks: %s" % (
-            iss, giss.state, giss.title, giss.milestone, giss.assignee, labs, desc.rstrip(), subs)
+#         resp = "issue#=%d %s |%s| milestone=%s assigned=%s labels=%s<br/>%s<br/>subtasks: %s" % (
+#             iss, giss.state, giss.title, giss.milestone, giss.assignee, labs, desc.rstrip(), subs)
         
-        resp += "<br/><br/>SubTasks:<br/>"
+#         resp += "<br/><br/>SubTasks:<br/>"
+        context['subtasks'] = []
         for i in range(len(subs)):
             iss = int(subs[i])
             giss = get_issue(user, pw, repo, iss, owner)
-            resp += "issue#=%d %s |%s| milestone=%s assigned=%s labels=%s<br/>%s<br/>" % (
-                                iss, giss.state, giss.title, giss.milestone, giss.assignee, [str(lab) for lab in giss.labels], giss.body)
-        return HttpResponse(resp, content_type="text/html")
+            context['subtasks'].append(giss.title)
+#             resp += "issue#=%d %s |%s| milestone=%s assigned=%s labels=%s<br/>%s<br/>" % (
+#                                 iss, giss.state, giss.title, giss.milestone, giss.assignee, [str(lab) for lab in giss.labels], giss.body)
+#         return HttpResponse(resp, content_type="text/html")
+        context['issue_title'] = giss.title
+        return render(request, 'gittrack/templates/topview.html', context)
+
