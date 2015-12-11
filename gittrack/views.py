@@ -4,6 +4,9 @@ import sys
 from django.http import HttpResponse#, HttpResponseRedirect
 # from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, render_to_response
+from django import template
+# register = template.Library()
+
 import datetime
 from issue import *
 try:
@@ -13,6 +16,11 @@ except:
 
 DAYWIDTH = 180
 CARDWIDTH = 300
+
+# def issue_tag():
+#     pass
+# 
+# register.inclusion_tag('issue.html')(issue_tag)
 
 static_context = {
     'images': 'static/images/',
@@ -186,7 +194,7 @@ def view_top(request):
     repo = request.GET['repo']
     iss = int(request.GET['issue'])
     context['repo'] = repo
-
+    
     #very basic security
     print "PATH:", sys.path
     if config and user in config.user:

@@ -118,12 +118,13 @@ WSGI_APPLICATION = 'gittrack.wsgi.application'
 # )
 # set template path to root, so apps can specify their respective subdirectories
 tempath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', ''))
-# print "DXBUG file:", __file__, "template path:", tempath
+tempath2 = os.path.abspath(os.path.dirname(__file__)) + "/templates/"
+print "DXBUG file:", __file__, "template path:", tempath, tempath2
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    tempath,# tempath + "/sandbox"
+    tempath, tempath2
 )
 
 INSTALLED_APPS = (
