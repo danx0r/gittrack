@@ -3,3 +3,15 @@
 	|
 	{{ issue.body }}
 {% endif %}
+{% if issue.labels %}
+	|
+	{{ issue.labels }}
+{% endif %}
+{% if issue.assignee %}
+	|
+	{{ issue.assignee }}
+{% endif %}
+{% if issue.milestone %}
+	|
+	{{ issue.milestone }}
+{% endif %}
