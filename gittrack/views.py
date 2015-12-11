@@ -180,7 +180,7 @@ def view_issue(request):
     context['owner'] = owner
        
     giss = get_issue(user, pw, repo, iss, owner)
-    print "DEBUG get_issue returns:", repr(giss)
+    print "DEBUG get_issue", dir(giss.labels[0])
     if type(giss) in (str, unicode, type(None)):
         return HttpResponse(giss)
     else:

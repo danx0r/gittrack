@@ -3,10 +3,6 @@
 	|
 	{{ issue.body }}
 {% endif %}
-{% if issue.labels %}
-	|
-	{{ issue.labels }}
-{% endif %}
 {% if issue.assignee %}
 	|
 	{{ issue.assignee }}
@@ -14,4 +10,12 @@
 {% if issue.milestone %}
 	|
 	{{ issue.milestone }}
+{% endif %}
+{% if issue.labels %}
+	{% for lab in issue.labels %}
+		|
+		<span style="background-color: #{{ lab.color }}">
+			{{ lab }}
+		</span>
+	{% endfor %}
 {% endif %}
