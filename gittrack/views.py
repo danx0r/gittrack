@@ -217,4 +217,11 @@ def view_top(request):
         labs = [str(lab) for lab in giss.labels]
         resp = "issue#=%d %s |%s| milestone=%s assigned=%s labels=%s<br/>%s<br/>subtasks: %s" % (
             iss, giss.state, giss.title, giss.milestone, giss.assignee, labs, desc.rstrip(), subs)
+        
+        resp += "<br/><br/>SubTasks:<br/>"
+        for i in range(len(subs)):
+            iss = int(subs[i])
+            giss = get_issue(user, pw, repo, iss, owner)
+            resp += "issue#=%d %s |%s| milestone=%s assigned=%s labels=%s<br/>%s<br/>" % (
+                                iss, giss.state, giss.title, giss.milestone, giss.assignee, [str(lab) for lab in giss.labels], giss.body)
         return HttpResponse(resp, content_type="text/html")
