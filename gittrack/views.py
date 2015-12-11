@@ -207,13 +207,16 @@ def view_top(request):
     if type(giss) in (str, unicode, type(None)):
         return HttpResponse(giss)
     else:
-        lines = giss.body.split("\n")
-        desc = ""
-        for line in lines:
-            if line.find("SUBTASKS") == 0:
-                subs = line.split()[1:]
-            else:
-                desc += line + "\n"
+        if giss.body:
+            lines = giss.body.split("\n")
+            desc = ""
+            for line in lines:
+                if line.find("SUBTASKS") == 0:
+                    subs = line.split()[1:]
+                else:
+                    desc += line + "\n"
+        else:
+            subs = []
         labs = [str(lab) for lab in giss.labels]
         context['issue_title'] = giss.title
         context['subtasks'] = []
