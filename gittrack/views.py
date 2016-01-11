@@ -186,6 +186,31 @@ def view_issue(request):
         return HttpResponse("issue#=%d %s |%s| milestone=%s assigned=%s labels=%s\n%s" % 
                             (iss, giss.state, giss.title, giss.milestone, giss.assignee, giss.labels, giss.body), content_type="text/plain")
 
+def view_issue_jira(request):
+    context = dict(static_context)
+    user = request.GET['user']
+    pw = request.GET['pw']
+    url = request.GET['url']
+    iss = request.GET['issue']
+
+    #very basic security
+    print "PATH:", sys.path
+    if config and user in config.user:
+        if pw in config.user[user]['pw']:
+            pw = config.user[user]['pw'][pw]
+        else:
+            return HttpResponse("bad password")
+        user = config.user[user]['user']
+        print "DEBUG using alias", user
+    else:
+        print "DEBUG not using alias, config=", config
+      
+    jiss = get_issue_jira(user, pw, url, iss)
+    if type(jiss) in (str, unicode, type(None)):
+        return HttpResponse(jiss)
+    else:
+        return HttpResponse("%s: %s|%s" % (jiss, jiss.fields.summary, jiss.fields.description), content_type="text/plain")
+
 def view_top(request):
     context = dict(static_context)
     user = request.GET['user']
