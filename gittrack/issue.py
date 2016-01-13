@@ -188,6 +188,15 @@ def get_issues(user, pw, repo, owner=None, mil=None):
 #     issues.sort(key = lambda x: x.num)
     return issues
 
+def get_issues_jira(user, pw, url, proj):
+    aj = jira.JIRA(url, basic_auth=(user, pw))
+    jisses = aj.search_issues("project=%s" % proj)
+    issues = []
+    for jiss in jisses:
+        iss = issue(int(jiss.id), str(jiss.fields.assignee) if jiss.fields.assignee else '', jiss.fields.summary, jiss.fields.description)
+        issues.append(iss)
+    return issues
+
 def get_issue(user, pw, repo, iss, owner=None):
     global gh, giss
     gh = github3.login(user, password=pw)
@@ -199,22 +208,6 @@ def get_issue(user, pw, repo, iss, owner=None):
     giss = gh.issue(owner, repo, iss)
     print "DEBUG get_issue user=%s owner=%s repo=%s iss=%d giss=%s" % (user, owner, repo, iss, giss)
     return giss
-
-if __name__ == '__main__':
-    issues = [
-        issue(1, 'danx0r', "Fursst task"),
-        issue(2, 'danx0r', "Secnd task"),
-        issue(3, 'danx0r', "FORTH task BLOCKED BY: 4"),
-        issue(4, 'danx0r', "Third task"),
-    ]
-#     issues = get_issues(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else sys.argv[1], sys.argv[5] if len(sys.argv) > 5 else None)
-    parse_issues(issues)
-    for iss in issues:
-        print "ISSUE:", iss.bigrepr()
-    crit, path = compute_crit(issues)
-    print "critical path days: %.2f path:" % crit
-    for x in path:
-        print " ", x.bigrepr(), x.auto_bb
 
 def get_issue_jira(user, pw, url, iss):
     aj = jira.JIRA(url, basic_auth=(user, pw))

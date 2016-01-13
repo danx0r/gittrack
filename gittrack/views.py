@@ -31,12 +31,8 @@ def home(request):
     context = dict(static_context)
     user = request.GET['user']
     pw = request.GET['pw']
-    repo = request.GET['repo']
-    context['repo'] = repo
-    if 'milestone' in request.GET:
-        mil = request.GET['milestone']
-    else:
-        return HttpResponse("Must specify a milestone")
+    url = request.GET['url']
+    proj = request.GET['project']
 
     #very basic security
     print "PATH:", sys.path
@@ -50,11 +46,7 @@ def home(request):
     else:
         print "DEBUG not using alias, config=", config
 
-    owner = request.GET['owner'] if 'owner' in request.GET else user
-    context['owner'] = owner
-        
-#     print ("REPO:", repo, "OWNER:", owner, "USER:", user, "MILESTONE:", mil)
-    issues = get_issues(user, pw, repo, owner, mil)
+    issues = get_issues_jira(user, pw, url, proj)
     if type(issues) != list:
         return HttpResponse(issues)
     parse_issues(issues)
