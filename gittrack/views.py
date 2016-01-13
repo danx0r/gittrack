@@ -61,6 +61,7 @@ def home(request):
     #create date column
     start = issues[0].mil_start
     due = issues[0].mil_due
+    due = tzlocal.get_localzone().localize(parse_dt("2016-1-1")).astimezone(pytz.utc) #FIXME bogus
     if due and not start:
         start = due - datetime.timedelta(days=7)
     elif start and not due:
@@ -115,7 +116,7 @@ def home(request):
                 card['title'] = iss.title           # + "|"+str(iss.auto_bb)
                 card['body'] = iss.body
                 card['comments'] = iss.comments
-                card['link'] = '<a href="https://github.com/%s/%s/issues/%d" target="_blank">go to issue on github</a>' % (owner, repo, iss.num)
+#                 card['link'] = '<a href="https://github.com/%s/%s/issues/%d" target="_blank">go to issue on github</a>' % (owner, repo, iss.num)
                 card['labels'] = iss.labels
                 card['length'] = iss.estimate
                 card['start'], x = iss.crit_path()
