@@ -25,8 +25,9 @@ class issue(object):
 #     mil_start = ''          #datetime or ''
 #     mil_due = ''            #datetime or ''
 
-    def __init__(self, num=0, ass='', title="", body="", bb=[], est=0.5):
+    def __init__(self, num=0, ass='', title="", body="", bb=[], est=0.5, name=""):
         self.num = num
+        self.name = name
         self.assignee = ass
         self.title = title
         self.body = body
@@ -202,7 +203,9 @@ def get_issues_jira(user, pw, url, proj):
     jisses = aj.search_issues("project=%s" % proj)
     issues = []
     for jiss in jisses:
-        iss = issue(int(jiss.id), str(jiss.fields.assignee) if jiss.fields.assignee else '', jiss.fields.summary, jiss.fields.description)
+        nom = str(jiss)
+        nom = nom[nom.find('-')+1:]
+        iss = issue(int(jiss.id), str(jiss.fields.assignee) if jiss.fields.assignee else '', jiss.fields.summary, jiss.fields.description, name=nom)
 #         print "ISSUELINKS:", jiss.fields.issuelinks
         for lnk in jiss.fields.issuelinks:
             if hasattr(lnk, 'inwardIssue'):

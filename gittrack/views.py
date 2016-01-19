@@ -113,6 +113,7 @@ def home(request):
             if iss.assignee == ass:
                 card = {}
                 card['num'] = iss.num
+                card['name'] = iss.name
                 card['title'] = iss.title           # + "|"+str(iss.auto_bb)
                 card['body'] = iss.body
                 card['comments'] = iss.comments

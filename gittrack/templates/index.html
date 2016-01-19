@@ -129,10 +129,10 @@
                 </div>
                 <div style="position:relative">
                     {% for card in col.1 %}
-                        <div class="card" vp="{{ card.start }}" vh="{{ card.length }}" onclick='show_boxy("body_{{ card.num }}")'>
+                        <div class="card" vp="{{ card.start }}" vh="{{ card.length }}" onclick='show_boxy("body_{{ card.name }}")'>
                             <div class="inner" style="background-color:{{ card.color }}; color:{{ card.texcol }}; border-style:{{ card.border }}; border-color:{{ card.bcolor }}">
                                 <div style="background-color:#333;color:#eee;padding: 0 2px 0 2px; float:left">
-                                    {{ card.num }}
+                                    {{ card.name }}
                                 </div>
                                 {% for bb in card.BB %}
                                     <div style="float:left">
@@ -144,7 +144,7 @@
                                 {% endfor %}
                                 <span style="font-size: 30%">&nbsp;</span>
                                 {{ card.title }}
-						    	<div id="body_{{ card.num }}" style="display:none">
+						    	<div id="body_{{ card.name }}" style="display:none">
 						    		<div class="detail_title">{{ card.title|linebreaks }}</div>
 						    		{% if card.body %}
 										<div class="detail_body">{{ card.body|linebreaks }}</div>
