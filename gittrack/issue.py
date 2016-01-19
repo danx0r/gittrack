@@ -206,12 +206,13 @@ def get_issues_jira(user, pw, url, proj):
         nom = str(jiss)
         nom = nom[nom.find('-')+1:]
         iss = issue(int(jiss.id), str(jiss.fields.assignee) if jiss.fields.assignee else '', jiss.fields.summary, jiss.fields.description, name=nom)
-#         print "ISSUELINKS:", jiss.fields.issuelinks
         for lnk in jiss.fields.issuelinks:
             if hasattr(lnk, 'inwardIssue'):
                 iss.blocked_by.append(int(lnk.inwardIssue.id))
                 print "BLOCKED by:", iss.blocked_by[-1]
         issues.append(iss)
+        if jiss.fields.timeoriginalestimate:
+            iss.estimate = jiss.fields.timeoriginalestimate / 28800.0
     return issues
 
 def get_issue(user, pw, repo, iss, owner=None):
