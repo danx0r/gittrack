@@ -146,7 +146,7 @@ def home(request):
     context['card_width'] = CARDWIDTH
     context['tot_width_pad'] = DAYWIDTH + CARDWIDTH * len(context['columns'])
     context['tot_width'] = context['tot_width_pad'] -6
-
+    context['title'] = "%s TimeTrack" % proj
     return render(request, 'gittrack/templates/index.html', context)
 
 def view_issue(request):
