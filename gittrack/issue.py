@@ -78,39 +78,49 @@ def map_prev_assignee(map, iss):
 #parse BB and TE
 #ensure no parallel work for one assignee
 def parse_issues(issues):
+    print "ISSUES:", type(issues[0])
     map = {}
     for iss in issues:
         if iss == None:
             continue
         map[iss.num] = iss
+    print"MAP:", map
     for iss in issues:
         if iss == None:
             continue
-        s = iss.title + (" " + iss.body if iss.body else "")
-        for c in iss.comments:
-            s += " " + c
-        i = s.rfind("ESTIMATE DAYS:")
-        if i >= 0:
-            try:
-                te = float(s[i+14:].split()[0])
-                iss.estimate = te
-            except:
-                print "unparsed ESTIMATE DAYS:"
-        iss.blocked_by = []
-        while "BLOCKED BY:" in s:
-            try:
-                i = s.find("BLOCKED BY:") + 11
-                s = s[i:]
-                wrds = s.split()
-                for b in wrds:
-                    bb = int(b.replace(',', ""))
-    #                 print "BB:", bb
-                    if bb in map:
-                        iss.blocked_by.append(map[bb])
-                    if ',' not in b:
-                        break
-            except:
-                print "unparsed BLOCKED BY:"
+        #replace id nums w issue object
+        for i in range(len(iss.blocked_by)):
+            bb = iss.blocked_by[i]
+            if bb in map:
+                iss.blocked_by[i] = map[bb]
+            else:
+                print "ERR no bb", bb
+        print "FIXED BB:", iss.blocked_by
+#         s = iss.title + (" " + iss.body if iss.body else "")
+#         for c in iss.comments:
+#             s += " " + c
+#         i = s.rfind("ESTIMATE DAYS:")
+#         if i >= 0:
+#             try:
+#                 te = float(s[i+14:].split()[0])
+#                 iss.estimate = te
+#             except:
+#                 print "unparsed ESTIMATE DAYS:"
+#         iss.blocked_by = []
+#         while "BLOCKED BY:" in s:
+#             try:
+#                 i = s.find("BLOCKED BY:") + 11
+#                 s = s[i:]
+#                 wrds = s.split()
+#                 for b in wrds:
+#                     bb = int(b.replace(',', ""))
+#     #                 print "BB:", bb
+#                     if bb in map:
+#                         iss.blocked_by.append(map[bb])
+#                     if ',' not in b:
+#                         break
+#             except:
+#                 print "unparsed BLOCKED BY:"
     for iss in issues:
         #determine if any of our bb's are assigned to us
         flag = False
@@ -196,7 +206,7 @@ def get_issues_jira(user, pw, url, proj):
 #         print "ISSUELINKS:", jiss.fields.issuelinks
         for lnk in jiss.fields.issuelinks:
             if hasattr(lnk, 'inwardIssue'):
-                iss.blocked_by.append(str(lnk.inwardIssue))
+                iss.blocked_by.append(int(lnk.inwardIssue.id))
                 print "BLOCKED by:", iss.blocked_by[-1]
         issues.append(iss)
     return issues
