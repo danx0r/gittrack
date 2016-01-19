@@ -30,7 +30,6 @@ class issue(object):
         self.assignee = ass
         self.title = title
         self.body = body
-        self.blocked_by = bb
         self.estimate = est
         self.labels = []
         self.comments = []
@@ -194,6 +193,11 @@ def get_issues_jira(user, pw, url, proj):
     issues = []
     for jiss in jisses:
         iss = issue(int(jiss.id), str(jiss.fields.assignee) if jiss.fields.assignee else '', jiss.fields.summary, jiss.fields.description)
+#         print "ISSUELINKS:", jiss.fields.issuelinks
+        for lnk in jiss.fields.issuelinks:
+            if hasattr(lnk, 'inwardIssue'):
+                iss.blocked_by.append(str(lnk.inwardIssue))
+                print "BLOCKED by:", iss.blocked_by[-1]
         issues.append(iss)
     return issues
 
