@@ -63,9 +63,9 @@ def home(request):
     due = issues[0].mil_due
     due = tzlocal.get_localzone().localize(parse_dt("2016-1-1")).astimezone(pytz.utc) #FIXME bogus
     if due and not start:
-        start = due - datetime.timedelta(days=7)
+        start = due - datetime.timedelta(days=14)
     elif start and not due:
-        due = start + datetime.timedelta(days=7)
+        due = start + datetime.timedelta(days=14)
     elif not start and not due:
         return HttpResponse("milestone needs a start and due date.  Add start date as ST:2011-1-1")
 #     print "start date:", start, "due date:", due
