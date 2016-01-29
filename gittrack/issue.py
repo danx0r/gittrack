@@ -4,6 +4,7 @@
 import sys
 import pytz, tzlocal
 from dateutil.parser import parse as parse_dt
+from collections import defaultdict
 import github3
 import jira
 
@@ -76,6 +77,28 @@ def map_prev_assignee(map, iss):
         i -= 1
     return None
 
+#make sure issues cannot overlap
+#we do this by setting up a block between all issues for a given assignee
+def self_block(map, issues):
+    assignees = defaultdict(list)
+    for iss in map.values():
+        assignees[iss.assignee].append(iss)
+    for ass in assignees:
+        for iss in assignees[ass]:
+            #determine if any of our bb's are assigned to us
+            flag = False
+            for bb in iss.blocked_by:
+                if bb.assignee == ass:
+                    flag = True
+                    break
+            #if not, auto-bb previous issue if any
+            if not flag:
+                prev = map_prev_assignee(map, iss)
+    #             print "prev for", iss.num, "is:", (prev.num if prev else "NONE")
+                if prev != None and not prev.is_bb(iss):
+                    iss.blocked_by.append(prev)
+                    iss.auto_bb.append(prev.num)
+
 #parse BB and TE
 #ensure no parallel work for one assignee
 def parse_issues(issues):
@@ -97,20 +120,7 @@ def parse_issues(issues):
             else:
                 print "ERR no bb", bb
         print "FIXED BB:", iss.blocked_by
-    for iss in issues:
-        #determine if any of our bb's are assigned to us
-        flag = False
-        for bb in iss.blocked_by:
-            if bb.assignee == iss.assignee:
-                flag = True
-                break
-        #if not, auto-bb previous issue if any
-        if not flag:
-            prev = map_prev_assignee(map, iss)
-            print "prev for", iss.num, "is:", (prev.num if prev else "NONE")
-            if prev != None and not prev.is_bb(iss):
-                iss.blocked_by.append(prev)
-                iss.auto_bb.append(prev.num)
+    self_block(map, issues)
 
     #DEBUG PRINTOUT
 #     for iss in issues:
