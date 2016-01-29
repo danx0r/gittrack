@@ -84,6 +84,7 @@ def self_block(map, issues):
     for iss in map.values():
         assignees[iss.assignee].append(iss)
     for ass in assignees:
+        unblocked = []
         for iss in assignees[ass]:
             #determine if any of our bb's are assigned to us
             flag = False
@@ -93,11 +94,13 @@ def self_block(map, issues):
                     break
             #if not, auto-bb previous issue if any
             if not flag:
-                prev = map_prev_assignee(map, iss)
-    #             print "prev for", iss.num, "is:", (prev.num if prev else "NONE")
-                if prev != None and not prev.is_bb(iss):
-                    iss.blocked_by.append(prev)
-                    iss.auto_bb.append(prev.num)
+                unblocked.append(iss)
+        for iss in unblocked:
+            prev = map_prev_assignee(map, iss)
+#             print "prev for", iss.num, "is:", (prev.num if prev else "NONE")
+            if prev != None and not prev.is_bb(iss):
+                iss.blocked_by.append(prev)
+                iss.auto_bb.append(prev.num)
 
 #parse BB and TE
 #ensure no parallel work for one assignee
