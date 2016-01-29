@@ -95,12 +95,15 @@ def self_block(map, issues):
             #if not, auto-bb previous issue if any
             if not flag:
                 unblocked.append(iss)
+        print "UNBLOCKED:", unblocked
+        prev = None
         for iss in unblocked:
-            prev = map_prev_assignee(map, iss)
-#             print "prev for", iss.num, "is:", (prev.num if prev else "NONE")
+#             prev = map_prev_assignee(map, iss)
+            print "prev for", iss.num, "is:", (prev.num if prev else "NONE")
             if prev != None and not prev.is_bb(iss):
                 iss.blocked_by.append(prev)
                 iss.auto_bb.append(prev.num)
+            prev = iss
 
 #parse BB and TE
 #ensure no parallel work for one assignee
