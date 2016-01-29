@@ -46,15 +46,15 @@ def home(request):
     else:
         print "DEBUG not using alias, config=", config
 
-    issues = get_issues_jira(user, pw, url, proj)
-    if type(issues) != list:
-        return HttpResponse(issues)
-    parse_issues(issues)
-#     for iss in issues:
-#         print "ISSUE:", iss.bigrepr()
-    crit, path = compute_crit(issues)
-    if crit == None:
-        raise Exception("CRIT!")
+    crit = None
+    while crit == None:
+        issues = get_issues_jira(user, pw, url, proj)
+        if type(issues) != list:
+            return HttpResponse(issues)
+        parse_issues(issues)
+        crit, path = compute_crit(issues)
+        if crit == None:
+            print ("CRIT PATH RECURSIVE LIMIT: redo")
     print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
 
     if not issues:
