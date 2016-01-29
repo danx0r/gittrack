@@ -5,6 +5,7 @@ import sys
 import pytz, tzlocal
 from dateutil.parser import parse as parse_dt
 from collections import defaultdict
+from random import shuffle
 import github3
 import jira
 
@@ -97,9 +98,10 @@ def self_block(map, issues):
                 unblocked.append(iss)
         print "UNBLOCKED:", unblocked
         prev = None
+        shuffle(unblocked)
         for iss in unblocked:
 #             prev = map_prev_assignee(map, iss)
-            print "prev for", iss.num, "is:", (prev.num if prev else "NONE")
+            print "prev for", iss.name, "is:", (prev.name if prev else "NONE")
             if prev != None and not prev.is_bb(iss):
                 iss.blocked_by.append(prev)
                 iss.auto_bb.append(prev.num)
