@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404, render_to_response
 from django import template
 # register = template.Library()
 
-import datetime
+import datetime, random
 from issue import *
 try:
     import config
@@ -46,6 +46,25 @@ def home(request):
     else:
         print "DEBUG not using alias, config=", config
 
+    NUM = 5
+    paths = []
+    seeds = [random.randint(0,1000000) for i in range(NUM)]
+    for j in range(NUM):
+        rs = seeds.pop(0)
+        random.seed(rs)
+        crit = None
+        while crit == None:
+            issues = get_issues_jira(user, pw, url, proj)
+            if type(issues) != list:
+                return HttpResponse(issues)
+            parse_issues(issues)
+            crit, path = compute_crit(issues)
+            if crit == None:
+                print ("CRIT PATH RECURSIVE LIMIT: redo")
+        print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
+        paths.append((crit, rs))
+    paths.sort()
+    random.seed(paths[0][1])
     crit = None
     while crit == None:
         issues = get_issues_jira(user, pw, url, proj)
@@ -55,7 +74,8 @@ def home(request):
         crit, path = compute_crit(issues)
         if crit == None:
             print ("CRIT PATH RECURSIVE LIMIT: redo")
-    print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
+    print "PATHS:", paths
+    print "FINAL critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
 
     if not issues:
         return HttpResponse("no issues found")
