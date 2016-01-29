@@ -97,31 +97,6 @@ def parse_issues(issues):
             else:
                 print "ERR no bb", bb
         print "FIXED BB:", iss.blocked_by
-#         s = iss.title + (" " + iss.body if iss.body else "")
-#         for c in iss.comments:
-#             s += " " + c
-#         i = s.rfind("ESTIMATE DAYS:")
-#         if i >= 0:
-#             try:
-#                 te = float(s[i+14:].split()[0])
-#                 iss.estimate = te
-#             except:
-#                 print "unparsed ESTIMATE DAYS:"
-#         iss.blocked_by = []
-#         while "BLOCKED BY:" in s:
-#             try:
-#                 i = s.find("BLOCKED BY:") + 11
-#                 s = s[i:]
-#                 wrds = s.split()
-#                 for b in wrds:
-#                     bb = int(b.replace(',', ""))
-#     #                 print "BB:", bb
-#                     if bb in map:
-#                         iss.blocked_by.append(map[bb])
-#                     if ',' not in b:
-#                         break
-#             except:
-#                 print "unparsed BLOCKED BY:"
     for iss in issues:
         #determine if any of our bb's are assigned to us
         flag = False
