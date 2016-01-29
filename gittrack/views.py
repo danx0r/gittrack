@@ -53,7 +53,9 @@ def home(request):
 #     for iss in issues:
 #         print "ISSUE:", iss.bigrepr()
     crit, path = compute_crit(issues)
-#     print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
+    if crit == None:
+        raise Exception("CRIT!")
+    print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
 
     if not issues:
         return HttpResponse("no issues found")

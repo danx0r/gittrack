@@ -42,15 +42,23 @@ class issue(object):
         self.mil_start = ''
         self.mil_due = ''
         self.closed = False
+        self.crit_path_level = 0
 
     def crit_path(self):
+        self.crit_path_level
+        self.crit_path_level += 1
+        if self.crit_path_level > 10:
+            return None, None
         days = 0
         path = []
         for bb in self.blocked_by:
             crit, nupth = bb.crit_path()
+            if crit == None:
+                return None, None
             if crit > days:
                 days = crit
                 path = nupth
+        self.crit_path_level -= 1
         return self.estimate + days, path + [self]
     
     def is_bb(self, issue):
@@ -143,6 +151,8 @@ def compute_crit(issues):
         if iss == None:
             continue
         cp, pth = iss.crit_path()
+        if cp == None:
+            return None, None
         if cp > crit:
             crit = cp
             path = pth
