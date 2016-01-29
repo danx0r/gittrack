@@ -76,19 +76,6 @@ def map_prev_assignee(map, iss):
         i -= 1
     return None
 
-#find previous issue numerically for assignee
-def map_prev_assignee(map, iss):
-    mx = - 1
-    for i in map:
-        if i > mx:
-            mx = i
-    i = iss.num + 1
-    while i <= mx:
-        if i in map and map[i].assignee == iss.assignee:
-            return map[i]
-        i += 1
-    return None
-
 #parse BB and TE
 #ensure no parallel work for one assignee
 def parse_issues(issues):
