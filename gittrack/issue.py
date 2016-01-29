@@ -193,7 +193,7 @@ def get_issues(user, pw, repo, owner=None, mil=None):
 
 def get_issues_jira(user, pw, url, proj):
     aj = jira.JIRA(url, basic_auth=(user, pw))
-    jisses = aj.search_issues("project=%s" % proj)
+    jisses = aj.search_issues("project=%s" % proj, maxResults=-1)
     issues = []
     for jiss in jisses:
         nom = str(jiss)
@@ -206,6 +206,7 @@ def get_issues_jira(user, pw, url, proj):
         issues.append(iss)
         if jiss.fields.timeoriginalestimate:
             iss.estimate = jiss.fields.timeoriginalestimate / 28800.0
+    print "ISSUE COUNT:", len(issues)
     return issues
 
 def get_issue(user, pw, repo, iss, owner=None):
