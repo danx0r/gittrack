@@ -4,7 +4,10 @@
 import sys
 import pytz, tzlocal
 from dateutil.parser import parse as parse_dt
+from collections import defaultdict
+from random import shuffle
 import github3
+import jira
 
 def clean_cr(s):
     if s == None:
@@ -24,12 +27,12 @@ class issue(object):
 #     mil_start = ''          #datetime or ''
 #     mil_due = ''            #datetime or ''
 
-    def __init__(self, num=0, ass='', title="", body="", bb=[], est=0.5):
+    def __init__(self, num=0, ass='', title="", body="", bb=[], est=0.5, name=""):
         self.num = num
+        self.name = name
         self.assignee = ass
         self.title = title
         self.body = body
-        self.blocked_by = bb
         self.estimate = est
         self.labels = []
         self.comments = []
@@ -39,15 +42,23 @@ class issue(object):
         self.mil_start = ''
         self.mil_due = ''
         self.closed = False
+        self.crit_path_level = 0
 
     def crit_path(self):
+        self.crit_path_level
+        self.crit_path_level += 1
+        if self.crit_path_level > 10:
+            return None, None
         days = 0
         path = []
         for bb in self.blocked_by:
             crit, nupth = bb.crit_path()
+            if crit == None:
+                return None, None
             if crit > days:
                 days = crit
                 path = nupth
+        self.crit_path_level -= 1
         return self.estimate + days, path + [self]
     
     def is_bb(self, issue):
@@ -75,56 +86,57 @@ def map_prev_assignee(map, iss):
         i -= 1
     return None
 
+#make sure issues cannot overlap
+#we do this by setting up a block between all issues for a given assignee
+def self_block(map, issues):
+    assignees = defaultdict(list)
+    for iss in map.values():
+        assignees[iss.assignee].append(iss)
+    for ass in assignees:
+        unblocked = []
+        for iss in assignees[ass]:
+            #determine if any of our bb's are assigned to us
+            flag = False
+            for bb in iss.blocked_by:
+                if bb.assignee == ass:
+                    flag = True
+                    break
+            #if not, auto-bb previous issue if any
+            if not flag:
+                unblocked.append(iss)
+        print "UNBLOCKED:", unblocked
+        prev = None
+        shuffle(unblocked)
+        for iss in unblocked:
+#             prev = map_prev_assignee(map, iss)
+            print "prev for", iss.name, "is:", (prev.name if prev else "NONE")
+            if prev != None and not prev.is_bb(iss):
+                iss.blocked_by.append(prev)
+                iss.auto_bb.append(prev.num)
+            prev = iss
+
 #parse BB and TE
 #ensure no parallel work for one assignee
 def parse_issues(issues):
+    print "ISSUES:", type(issues[0])
     map = {}
     for iss in issues:
         if iss == None:
             continue
         map[iss.num] = iss
+    print"MAP:", map
     for iss in issues:
         if iss == None:
             continue
-        s = iss.title + (" " + iss.body if iss.body else "")
-        for c in iss.comments:
-            s += " " + c
-        i = s.rfind("ESTIMATE DAYS:")
-        if i >= 0:
-            try:
-                te = float(s[i+14:].split()[0])
-                iss.estimate = te
-            except:
-                print "unparsed ESTIMATE DAYS:"
-        iss.blocked_by = []
-        while "BLOCKED BY:" in s:
-            try:
-                i = s.find("BLOCKED BY:") + 11
-                s = s[i:]
-                wrds = s.split()
-                for b in wrds:
-                    bb = int(b.replace(',', ""))
-    #                 print "BB:", bb
-                    if bb in map:
-                        iss.blocked_by.append(map[bb])
-                    if ',' not in b:
-                        break
-            except:
-                print "unparsed BLOCKED BY:"
-    for iss in issues:
-        #determine if any of our bb's are assigned to us
-        flag = False
-        for bb in iss.blocked_by:
-            if bb.assignee == iss.assignee:
-                flag = True
-                break
-        #if not, auto-bb previous issue if any
-        if not flag:
-            prev = map_prev_assignee(map, iss)
-#             print "prev for", iss, "is:", prev
-            if prev != None and not prev.is_bb(iss):
-                iss.blocked_by.append(prev)
-                iss.auto_bb.append(prev.num)
+        #replace id nums w issue object
+        for i in range(len(iss.blocked_by)):
+            bb = iss.blocked_by[i]
+            if bb in map:
+                iss.blocked_by[i] = map[bb]
+            else:
+                print "ERR no bb", bb
+        print "FIXED BB:", iss.blocked_by
+    self_block(map, issues)
 
     #DEBUG PRINTOUT
 #     for iss in issues:
@@ -139,6 +151,8 @@ def compute_crit(issues):
         if iss == None:
             continue
         cp, pth = iss.crit_path()
+        if cp == None:
+            return None, None
         if cp > crit:
             crit = cp
             path = pth
@@ -187,6 +201,24 @@ def get_issues(user, pw, repo, owner=None, mil=None):
 #     issues.sort(key = lambda x: x.num)
     return issues
 
+def get_issues_jira(user, pw, url, proj):
+    aj = jira.JIRA(url, basic_auth=(user, pw))
+    jisses = aj.search_issues("project=%s" % proj, maxResults=-1)
+    issues = []
+    for jiss in jisses:
+        nom = str(jiss)
+        nom = nom[nom.find('-')+1:]
+        iss = issue(int(jiss.id), str(jiss.fields.assignee) if jiss.fields.assignee else '', jiss.fields.summary, jiss.fields.description, name=nom)
+        for lnk in jiss.fields.issuelinks:
+            if hasattr(lnk, 'inwardIssue'):
+                iss.blocked_by.append(int(lnk.inwardIssue.id))
+                print "BLOCKED by:", iss.blocked_by[-1]
+        issues.append(iss)
+        if jiss.fields.timeoriginalestimate:
+            iss.estimate = jiss.fields.timeoriginalestimate / 28800.0
+    print "ISSUE COUNT:", len(issues)
+    return issues
+
 def get_issue(user, pw, repo, iss, owner=None):
     global gh, giss
     gh = github3.login(user, password=pw)
@@ -198,6 +230,11 @@ def get_issue(user, pw, repo, iss, owner=None):
     giss = gh.issue(owner, repo, iss)
     print "DEBUG get_issue user=%s owner=%s repo=%s iss=%d giss=%s" % (user, owner, repo, iss, giss)
     return giss
+
+def get_issue_jira(user, pw, url, iss):
+    aj = jira.JIRA(url, basic_auth=(user, pw))
+    jiss = aj.issue(iss)
+    return jiss
 
 if __name__ == '__main__':
     issues = [

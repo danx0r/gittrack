@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404, render_to_response
 from django import template
 # register = template.Library()
 
-import datetime
+import datetime, random
 from issue import *
 try:
     import config
@@ -31,12 +31,8 @@ def home(request):
     context = dict(static_context)
     user = request.GET['user']
     pw = request.GET['pw']
-    repo = request.GET['repo']
-    context['repo'] = repo
-    if 'milestone' in request.GET:
-        mil = request.GET['milestone']
-    else:
-        return HttpResponse("Must specify a milestone")
+    url = request.GET['url']
+    proj = request.GET['project']
 
     #very basic security
     print "PATH:", sys.path
@@ -50,18 +46,36 @@ def home(request):
     else:
         print "DEBUG not using alias, config=", config
 
-    owner = request.GET['owner'] if 'owner' in request.GET else user
-    context['owner'] = owner
-        
-#     print ("REPO:", repo, "OWNER:", owner, "USER:", user, "MILESTONE:", mil)
-    issues = get_issues(user, pw, repo, owner, mil)
-    if type(issues) != list:
-        return HttpResponse(issues)
-    parse_issues(issues)
-#     for iss in issues:
-#         print "ISSUE:", iss.bigrepr()
-    crit, path = compute_crit(issues)
-#     print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
+    NUM = 5
+    paths = []
+    seeds = [random.randint(0,1000000) for i in range(NUM)]
+    for j in range(NUM):
+        rs = seeds.pop(0)
+        random.seed(rs)
+        crit = None
+        while crit == None:
+            issues = get_issues_jira(user, pw, url, proj)
+            if type(issues) != list:
+                return HttpResponse(issues)
+            parse_issues(issues)
+            crit, path = compute_crit(issues)
+            if crit == None:
+                print ("CRIT PATH RECURSIVE LIMIT: redo")
+        print "critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
+        paths.append((crit, rs))
+    paths.sort()
+    random.seed(paths[0][1])
+    crit = None
+    while crit == None:
+        issues = get_issues_jira(user, pw, url, proj)
+        if type(issues) != list:
+            return HttpResponse(issues)
+        parse_issues(issues)
+        crit, path = compute_crit(issues)
+        if crit == None:
+            print ("CRIT PATH RECURSIVE LIMIT: redo")
+    print "PATHS:", paths
+    print "FINAL critical path days: %.2f path: %s" % (crit, ["%d|%.2f" % (x.num, x.estimate) for x in path])
 
     if not issues:
         return HttpResponse("no issues found")
@@ -69,10 +83,11 @@ def home(request):
     #create date column
     start = issues[0].mil_start
     due = issues[0].mil_due
+    due = tzlocal.get_localzone().localize(parse_dt("2016-1-1")).astimezone(pytz.utc) #FIXME bogus
     if due and not start:
-        start = due - datetime.timedelta(days=7)
+        start = due - datetime.timedelta(days=14)
     elif start and not due:
-        due = start + datetime.timedelta(days=7)
+        due = start + datetime.timedelta(days=14)
     elif not start and not due:
         return HttpResponse("milestone needs a start and due date.  Add start date as ST:2011-1-1")
 #     print "start date:", start, "due date:", due
@@ -120,15 +135,16 @@ def home(request):
             if iss.assignee == ass:
                 card = {}
                 card['num'] = iss.num
+                card['name'] = iss.name
                 card['title'] = iss.title           # + "|"+str(iss.auto_bb)
                 card['body'] = iss.body
                 card['comments'] = iss.comments
-                card['link'] = '<a href="https://github.com/%s/%s/issues/%d" target="_blank">go to issue on github</a>' % (owner, repo, iss.num)
+#                 card['link'] = '<a href="https://github.com/%s/%s/issues/%d" target="_blank">go to issue on github</a>' % (owner, repo, iss.num)
                 card['labels'] = iss.labels
                 card['length'] = iss.estimate
                 card['start'], x = iss.crit_path()
                 card['start'] -= iss.estimate
-                card['BB'] = [x.num for x in iss.blocked_by if x.num not in iss.auto_bb]
+                card['BB'] = [x.name for x in iss.blocked_by if x.num not in iss.auto_bb]
                 card['closed'] = False
                 if iss.closed:
                     card['closed'] = True
@@ -153,7 +169,7 @@ def home(request):
     context['card_width'] = CARDWIDTH
     context['tot_width_pad'] = DAYWIDTH + CARDWIDTH * len(context['columns'])
     context['tot_width'] = context['tot_width_pad'] -6
-
+    context['title'] = "%s TimeTrack" % proj
     return render(request, 'gittrack/templates/index.html', context)
 
 def view_issue(request):
@@ -180,12 +196,36 @@ def view_issue(request):
     context['owner'] = owner
        
     giss = get_issue(user, pw, repo, iss, owner)
-    print "DEBUG get_issue", dir(giss.labels[0])
     if type(giss) in (str, unicode, type(None)):
         return HttpResponse(giss)
     else:
         return HttpResponse("issue#=%d %s |%s| milestone=%s assigned=%s labels=%s\n%s" % 
                             (iss, giss.state, giss.title, giss.milestone, giss.assignee, giss.labels, giss.body), content_type="text/plain")
+
+def view_issue_jira(request):
+    context = dict(static_context)
+    user = request.GET['user']
+    pw = request.GET['pw']
+    url = request.GET['url']
+    iss = request.GET['issue']
+
+    #very basic security
+    print "PATH:", sys.path
+    if config and user in config.user:
+        if pw in config.user[user]['pw']:
+            pw = config.user[user]['pw'][pw]
+        else:
+            return HttpResponse("bad password")
+        user = config.user[user]['user']
+        print "DEBUG using alias", user
+    else:
+        print "DEBUG not using alias, config=", config
+      
+    jiss = get_issue_jira(user, pw, url, iss)
+    if type(jiss) in (str, unicode, type(None)):
+        return HttpResponse(jiss)
+    else:
+        return HttpResponse("%s: %s|%s" % (jiss, jiss.fields.summary, jiss.fields.description), content_type="text/plain")
 
 def view_top(request):
     context = dict(static_context)
