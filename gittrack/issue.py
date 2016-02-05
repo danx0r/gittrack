@@ -106,7 +106,7 @@ def self_block(map, issues):
                 unblocked.append(iss)
         print "UNBLOCKED:", unblocked
         prev = None
-        shuffle(unblocked)
+#         shuffle(unblocked)
         for iss in unblocked:
 #             prev = map_prev_assignee(map, iss)
             print "prev for", iss.name, "is:", (prev.name if prev else "NONE")
@@ -115,10 +115,16 @@ def self_block(map, issues):
                 iss.auto_bb.append(prev.num)
             prev = iss
 
-#parse BB and TE
+#magicker
+def schedule_issues(issues):
+    print "ISSUES:", issues
+    for iss in issues:
+        print "  %s %d %s est: %f BB: %s" % (iss.name, iss.num, iss.assignee, iss.estimate, iss.blocked_by)
+    print
+
 #ensure no parallel work for one assignee
 def parse_issues(issues):
-    print "ISSUES:", type(issues[0])
+#     print "ISSUES:", issues
     map = {}
     for iss in issues:
         if iss == None:
@@ -135,7 +141,7 @@ def parse_issues(issues):
                 iss.blocked_by[i] = map[bb]
             else:
                 print "ERR no bb", bb
-        print "FIXED BB:", iss.blocked_by
+#         print "FIXED BB:", iss.blocked_by
     self_block(map, issues)
 
     #DEBUG PRINTOUT
@@ -212,7 +218,7 @@ def get_issues_jira(user, pw, url, proj):
         for lnk in jiss.fields.issuelinks:
             if hasattr(lnk, 'inwardIssue'):
                 iss.blocked_by.append(int(lnk.inwardIssue.id))
-                print "BLOCKED by:", iss.blocked_by[-1]
+#                 print "BLOCKED by:", iss.blocked_by[-1]
         issues.append(iss)
         if jiss.fields.timeoriginalestimate:
             iss.estimate = jiss.fields.timeoriginalestimate / 28800.0
