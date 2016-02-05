@@ -25,7 +25,6 @@ S += green_paint < green_post, red_paint + 1 <= red_post
 
 S.clear_solution()
 S.use_makespan_objective()
-print(S)
 
 task_colors = { green_paint   : '#A1D372',
                 green_post    : '#A1D372', 
@@ -61,4 +60,5 @@ S += red_paint > 2
 #Alice is a morning bird
 S += Alice['length'][:3] >= 3
 
+print(S)
 run(S)
