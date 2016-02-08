@@ -43,6 +43,7 @@ class issue(object):
         self.mil_due = ''
         self.closed = False
         self.crit_path_level = 0
+        self.start = 0
 
     def crit_path(self):
         self.crit_path_level
@@ -119,7 +120,7 @@ def self_block(map, issues):
 def schedule_issues(issues):
     print "ISSUES:", issues
     for iss in issues:
-        print "  %s %d %s est: %f BB: %s" % (iss.name, iss.num, iss.assignee, iss.estimate, iss.blocked_by)
+        print "  %s %d %s start: %f est: %f BB: %s" % (iss.name, iss.num, iss.assignee, iss.start, iss.estimate, iss.blocked_by)
     print
 
 #ensure no parallel work for one assignee
