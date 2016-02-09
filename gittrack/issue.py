@@ -8,6 +8,7 @@ from collections import defaultdict
 from random import shuffle
 import github3
 import jira
+from pyschedule import Scenario, solvers
 
 def clean_cr(s):
     if s == None:
@@ -67,7 +68,7 @@ class issue(object):
 
     def __repr__(self):
 #         return "<issue %d %s>" % (self.num, self.title)
-        return "<#%d|%s|%s>" % (self.num, self.assignee, clean_cr(self.title))
+        return "<%s(%d)%s|%s>" % (self.name, self.num, self.assignee, clean_cr(self.title))
     
     def bigrepr(self):
         return "<#%d|%s|%s|%s est: %.2f mil: %s|%s|%s bb: %s labels: %s>" % (self.num, self.assignee, 
@@ -118,10 +119,14 @@ def self_block(map, issues):
 
 #magicker
 def schedule_issues(issues):
+    asses = defaultdict(list)
     print "ISSUES:", issues
     for iss in issues:
         print "  %s %d %s start: %f est: %f BB: %s" % (iss.name, iss.num, iss.assignee, iss.start, iss.estimate, iss.blocked_by)
+        asses[iss.assignee].append(iss)
+    print "asses:", asses
     print
+    S = Scenario('sched', horizon=15)
 
 #ensure no parallel work for one assignee
 def parse_issues(issues):
