@@ -127,6 +127,16 @@ def schedule_issues(issues):
     print "asses:", asses
     print
     S = Scenario('sched', horizon=15)
+    for ass, isses in asses.items():
+        A = S.Resource(ass.split()[0])
+        for iss in isses:
+            T = S.Task(iss.name, length=int(iss.estimate*8))
+            T += A
+    S.clear_solution()
+    S.use_makespan_objective()
+    print "S:", S
+    s = S.solution()
+    print "s:", s
 
 #ensure no parallel work for one assignee
 def parse_issues(issues):
