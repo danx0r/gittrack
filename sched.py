@@ -62,4 +62,6 @@ if __name__ == "__main__":
     S += Alice['length'][:3] >= 3
     
     print(S)
-    plot(S)
+#     plot(S)
+    s = S.solution()
+    print s
