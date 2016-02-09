@@ -119,6 +119,8 @@ def home(request):
                 card['length'] = iss.estimate
                 card['start'], x = iss.crit_path()
                 card['start'] -= iss.estimate
+                card['start'] = iss.start
+#                 print "STart FOR %s is %f" % (iss.name, card['start'])
                 card['BB'] = [x.name for x in iss.blocked_by if x.num not in iss.auto_bb]
                 card['closed'] = False
                 if iss.closed:
