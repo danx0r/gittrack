@@ -239,13 +239,18 @@ def view_top(request):
                     subs = line.split()[1:]
                 else:
                     desc += line + "\n"
-            giss.body = desc
-        labs = [str(lab) for lab in giss.labels]
+#             giss.body = desc
         context['issue'] = giss
+        giss.issue_num = iss
+        giss.issue_cleanbody = desc
+        giss.issue_state = "closed" if giss.is_closed() else "open"
         context['subtasks'] = []
         for i in range(len(subs)):
             iss = int(subs[i])
             giss = get_issue(user, pw, repo, iss, owner)
+            giss.issue_num = iss
+            giss.issue_cleanbody = giss.body
+            giss.issue_state = "closed" if giss.is_closed() else "open"
             context['subtasks'].append(giss)
         return render(request, 'gittrack/templates/topview.html', context)
 

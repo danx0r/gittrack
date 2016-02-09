@@ -1,7 +1,11 @@
+{{ issue.issue_num }}
+|
+{{ issue.issue_state }}
+|
 {{ issue.title }}
 {% if issue.body %}
 	|
-	{{ issue.body }}
+	{{ issue.issue_cleanbody }}
 {% endif %}
 {% if issue.assignee %}
 	|
